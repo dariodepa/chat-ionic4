@@ -1,0 +1,20 @@
+<ion-app>
+  <div (click)="hideAlert()">
+    <ion-split-pane contentId="main">
+      <!--  our side menu  -->
+      <ion-router-outlet id="sidebar" #masterNav>
+        <app-conversation-list></app-conversation-list>
+      </ion-router-outlet>
+      <!-- the main content -->
+      <ion-router-outlet id="main" #detailNav></ion-router-outlet>
+    </ion-split-pane>
+  </div>
+</ion-app>
+
+<!-- 
+<ion-app>
+  <ion-split-pane when="md" disabled="{{disableSplit}}" contentId="detailNav" #splitpane>
+    <ion-router-outlet swipeBackEnabled="false" contentId="detailNav" id="masterNav" #masterNav></ion-router-outlet>
+    <ion-router-outlet name="detailNav" id="detailNav" #detailNav (activate)="onRouterActivate()"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app> -->
