@@ -3,13 +3,6 @@ import * as moment from 'moment/moment';
 // import * as moment from 'moment-timezone';
 import 'moment/locale/it.js';
 
-// firebase
-import * as firebase from 'firebase/app';
-import 'firebase/messaging';
-import 'firebase/database';
-import 'firebase/auth';
-import 'firebase/storage'
-
 // import { FIREBASESTORAGE_BASE_URL_IMAGE, BASE_URL_HOSTNAME } from './constants';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -594,30 +587,26 @@ export function createTranslateLoader(http: HttpClient) {
 
 
 
-export async function imageExists(url: string) {
-  console.log('ok getImageUrlThumb');
-  //Using async/await
-  const ref2 = firebase.storage().refFromURL(url)
-  try {
-      const listResult2 = await ref2.getDownloadURL()
-      console.log(listResult2)
-      // Do whatever
-      return true
-  } catch(err) {
-    return false;
-  }
-
-  // const listRef = firebase.storage()
-  // .refFromURL(imageurl)
-  // .getDownloadURL()
-  // .then((response) => {
-  //     // Found it. Do whatever
-  //     console.log('ok imageurl', imageurl);
-  //     return imageurl
-  // })
-  // .catch((err) => {
-  //     console.log('ERROR imageurl', imageurl);
-  //     return 
-  //     // Didn't exist... or some other error
-  // })
-}
+// https://liftcodeplay.com/2020/02/09/how-to-check-for-file-existance-in-firebase-storage/
+// export async function imageExists(urlImage: string ) {
+//   //Using async/await
+//   const ref = firebase.storage().refFromURL(urlImage)
+//   try {
+//     return await ref.getDownloadURL()
+//   } catch(e) {
+//     // console.log(e);
+//   }
+//   // const listRef = firebase.storage()
+//   // .refFromURL(imageurl)
+//   // .getDownloadURL()
+//   // .then((response) => {
+//   //     // Found it. Do whatever
+//   //     console.log('ok imageurl', imageurl);
+//   //     return imageurl
+//   // })
+//   // .catch((err) => {
+//   //     console.log('ERROR imageurl', imageurl);
+//   //     return 
+//   //     // Didn't exist... or some other error
+//   // })
+// }

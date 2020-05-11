@@ -152,7 +152,8 @@ export class AuthService {
   // Login with Email
   doLoginFirebase(email: string, password: string): any {
     return this.fireAuth.signInWithEmailAndPassword(email, password);
-    var token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTU4Mzc0Mzk0NiwiZXhwIjoxNTgzNzQ3NTQ2LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1hMHIxNkBjaGF0MjEtcHJlLTAxLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwic3ViIjoiZmlyZWJhc2UtYWRtaW5zZGstYTByMTZAY2hhdDIxLXByZS0wMS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInVpZCI6IjVhYjBmM2ZhNTcwNjZlMDAxNGJmZDcxZSJ9.JuNGrLuEU2Re5HB1xD1U7HR34QTYrJFp1IzCn-nAndTrzEzXrHjQYn-v4oidUiEVaWiBi-B0XnSlly_-3n34vpujlK7wKwgf4Vb6gPbvCoPIoodDXV1VgOSKwKEmQO1v5_YxJyKAWVTNOIr5CnkCCGiXEgZwtY9WDF_pA1EqMrAI3T8sjKMJEwKcCKXZgahGboXIV90j8ojxmGXFcSpOhEW2OSntH8IwNWm7Jo1dtwEWu5XWqnRr9WaaTL2xVyRYjqk6Sn-yBmAi80AsK6AnOxn9bhEit18ThRM-mIakVDxywQXk16lS_iZ10Hd5QlBsOcv0r5cOYCQ3G82LmHqX7A';
+    var token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImZjMmM4YmIyNmE3OGM0M2JkODYzNzA1YjNkNzkyMWI0ZTY0MjVkNTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2hhdDIxLXByZS0wMSIsImF1ZCI6ImNoYXQyMS1wcmUtMDEiLCJhdXRoX3RpbWUiOjE1ODYyNDUyMDcsInVzZXJfaWQiOiI1YWIwZjNmYTU3MDY2ZTAwMTRiZmQ3MWUiLCJzdWIiOiI1YWIwZjNmYTU3MDY2ZTAwMTRiZmQ3MWUiLCJpYXQiOjE1ODkyMTE5NzQsImV4cCI6MTU4OTIxNTU3NCwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6e30sInNpZ25faW5fcHJvdmlkZXIiOiJjdXN0b20ifX0.oBuun3Wb-kDpEVW94mjugh_VeFfOm9ghq3g3WlsYyHM05H5wsdBA7r2SnJURVYuY59OK8nZW5cwIIiPZ8KUDUH16xH532lPApBOOPqcwxFsR3DmLrLr5heQuk8_ns7EJxnfMoY8cdERI2DVWb2QRjlnI_3y44oXSvURsV6xXfFD13vT4YqmquBBgTrXPFqUQigPbDAaMd0qsHQwYYo_1Fkqvkcwjl_7Ueu16-QnqkTfXmQbNUTqDO7qkbVJq37t1VugmMXIZ956p04W808ikBavD8mqrpcwMYiVsV4M-eSEZTyFErtbuizNb2-hm-T9N19MZmjCcVEIGKxMirexk4Q';
+    //var token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTU4Mzc0Mzk0NiwiZXhwIjoxNTgzNzQ3NTQ2LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1hMHIxNkBjaGF0MjEtcHJlLTAxLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwic3ViIjoiZmlyZWJhc2UtYWRtaW5zZGstYTByMTZAY2hhdDIxLXByZS0wMS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInVpZCI6IjVhYjBmM2ZhNTcwNjZlMDAxNGJmZDcxZSJ9.JuNGrLuEU2Re5HB1xD1U7HR34QTYrJFp1IzCn-nAndTrzEzXrHjQYn-v4oidUiEVaWiBi-B0XnSlly_-3n34vpujlK7wKwgf4Vb6gPbvCoPIoodDXV1VgOSKwKEmQO1v5_YxJyKAWVTNOIr5CnkCCGiXEgZwtY9WDF_pA1EqMrAI3T8sjKMJEwKcCKXZgahGboXIV90j8ojxmGXFcSpOhEW2OSntH8IwNWm7Jo1dtwEWu5XWqnRr9WaaTL2xVyRYjqk6Sn-yBmAi80AsK6AnOxn9bhEit18ThRM-mIakVDxywQXk16lS_iZ10Hd5QlBsOcv0r5cOYCQ3G82LmHqX7A';
     return this.fireAuth.signInWithCustomToken(token)
   }
 
@@ -162,9 +163,9 @@ export class AuthService {
     const that = this;
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
       // Sign-out successful.
-      return this.fireAuth.signInWithCustomToken(token)
+      return that.fireAuth.signInWithCustomToken(token)
       .then(function(response) {
-        this.g.wdLog(['obsLoggedUser - authService.authenticateFirebaseCustomToken']);
+        // that.g.wdLog(['obsLoggedUser - authService.authenticateFirebaseCustomToken']);
         // that.getToken();????
         return response;
       })
