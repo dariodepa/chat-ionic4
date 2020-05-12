@@ -112,7 +112,10 @@ import {LoginModalModule} from './modals/authentication/login/login.module';
 //   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 // }
 
-import { createTranslateLoader } from './services/utils/utils';
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 const appInitializerFn = (appConfig: AppConfigProvider) => {
   return () => {

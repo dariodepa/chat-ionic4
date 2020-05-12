@@ -3,12 +3,7 @@
     <ion-split-pane contentId="main">
       <!--  our side menu  -->
       <ion-router-outlet id="sidebar" animated="false" #masterNav>
-        <ion-button expand="block" routerLink="/conversation-detail/42" routerDirection="forward">
-          Details
-        </ion-button>
-       
         <app-conversation-list></app-conversation-list>
-        
       </ion-router-outlet>
       <!-- the main content -->
       <ion-router-outlet id="main" animated="false" #detailNav></ion-router-outlet>

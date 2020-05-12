@@ -20,7 +20,7 @@ import { LoginModal } from './login.modal';
     FormsModule,
     ReactiveFormsModule,
     // LoginPageRoutingModule,
-    TranslateModule.forRoot({ 
+    TranslateModule.forChild({ 
       loader: { 
         provide: TranslateLoader, 
         useFactory: (createTranslateLoader),  

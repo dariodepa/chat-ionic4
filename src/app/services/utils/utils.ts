@@ -353,7 +353,7 @@ export function isExistInArray(members, currentUid) {
 }
 
 export function isInArray(key: string, array: Array<string>) {
-  if (array.indexOf(key) > -1) {
+  if (array && array !== undefined && array.indexOf(key) > -1 ) {
     return true;
   }
   return false;
@@ -582,7 +582,7 @@ export async function closeModal(modalController) {
 }
 
 export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, '../../../assets/i18n/', '.json');
 }
 
 

@@ -18,7 +18,7 @@ import { ConversationListPageRoutingModule } from './conversation-list-routing.m
     IonicModule,
     ConversationListPageRoutingModule,
     // LoginModalModule,
-    TranslateModule.forRoot({ 
+    TranslateModule.forChild({ 
       loader: { 
         provide: TranslateLoader, 
         useFactory: (createTranslateLoader),  

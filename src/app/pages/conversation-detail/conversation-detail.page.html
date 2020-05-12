@@ -1,8 +1,64 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>conversation-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
+<span *ngIf="conversationSelected; then showConversation else showPlaceholder"></span>
+<ng-template #showPlaceholder>
+  <div padding class="tile-splash-page">&nbsp;</div>
+</ng-template>
+<ng-template #showConversation>
+  <ion-header no-border>
+    <ion-toolbar>
+      <ion-title>
+
+
+        <ion-avatar>
+          <div #avatarPlaceholder class="avatar-placeholder" [style.background-color]="conversationSelected.color" [innerHTML]="conversationSelected.avatar"></div>
+          <div #avatarImage *ngIf="conversationSelected.image" class="avatar-profile" [style.background-image]="'url(' + conversationSelected.image + ')'"></div>
+        </ion-avatar>
+
+        <div *ngIf="conversationWith" class="tile-info-with" [class.info-open]="openInfoConversation || openInfoMessage">         
+          <span class="tile-username">{{conversationWithFullname?conversationWithFullname:''}}</span>
+ 
+          <span *ngIf="!isTypings; then yesTypings else noTypings"></span>
+            
+            <ng-template #yesTypings>
+              <div class="tile-last-activity">
+                <span class="tile-spinner active" id="tile-spinner">
+                  <div class="tile-bounce1"></div>
+                  <div class="tile-bounce2"></div>
+                  <div class="tile-bounce3"></div>
+                  <span></span>
+                </span>
+                <span class="tile-typing-now">{{nameUserTypingNow}} {{ 'LABEL_IS_WRITING' | translate }}</span>
+              </div>
+            </ng-template>
+  
+            <ng-template #noTypings>
+              <div class="tile-last-activity">
+                <span *ngIf="conversationSelected.channel_type == TYPE_DIRECT" class="tile-point" [ngStyle]="{ 'background-color':online?COLOR_GREEN:COLOR_RED }">&nbsp;</span>
+                <span *ngIf="conversationSelected.channel_type == TYPE_DIRECT">
+                    <span *ngIf="online; then userActive else userInactive"></span>
+                    <ng-template #userActive>
+                      <div class="tile-last-activity">{{ 'LABEL_ACTIVE_NOW' | translate }}</div>
+                    </ng-template>
+                    <ng-template #userInactive>
+                      <div class="tile-last-activity">{{lastConnectionDate}}</div>
+                    </ng-template>
+                </span>
+              </div>
+            </ng-template>
+  
+        </div>
+      </ion-title>
+  
+      <ion-buttons end *ngIf="openInfoConversation === false">
+          <button end ion-button icon-only (click)="onOpenCloseInfoConversation()">
+            <ion-icon name="information-circle"></ion-icon>
+          </button>
+      </ion-buttons>
+  
+  
+    </ion-toolbar>
+  </ion-header>
+</ng-template>
+
 
 <ion-content>
 <div>{{IDConv}}</div>

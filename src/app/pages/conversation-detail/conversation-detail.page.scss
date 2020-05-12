@@ -1,0 +1,104 @@
+.tile-splash-page {
+    width: auto;
+    height: 100vh; 
+    background: url('../../../assets/splash_white.jpg');
+    position: relative;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    background-size: cover;
+    z-index: 0;
+}
+
+ion-header {
+    ion-avatar {
+        position: relative;
+        display: inline-block;
+        margin: 0 12px 0 0;
+        padding: 0;
+        height: 40px;
+        width: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        line-height: 40px;
+        vertical-align: middle;
+        .avatar-placeholder {
+            position: absolute;
+            top:0;
+            left:0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 16px;
+            color:#ffffff;
+            font-weight: 500;
+        }
+        .avatar-profile {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            background-size: cover;
+            background-position: top center;
+            border-radius: 50%;
+            border-color: #c3c3c3;
+            border-style: solid;
+            border-width: 0px;
+        }
+    }
+    .tile-info-with {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .tile-username {
+        display: inline-block;
+        font-size: 15px;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 1);
+        margin: 0;
+        padding: 0;
+        &.info-open {
+            max-width: calc(100% - 300px);
+        }
+    }
+    .tile-last-activity {
+        color: rgba(0, 0, 0, .40);
+        font-size: 12px;
+        font-weight: normal;
+        margin-top: 2px;
+        vertical-align: middle;
+        position: relative;
+        .tile-typing-now {
+            //color:#2a69c1;
+        }
+        .tile-point {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            line-height: 10px;
+            margin-right: 5px;
+        }
+    }
+    
+    #tile-spinner {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        &.active {
+            display: inline-block;
+            width: 30px;
+        }
+    }
+    #tile-spinner > div {
+        width: 6px;
+        height: 6px;
+    }
+    
+    ion-title img {}
+}
+

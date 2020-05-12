@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { Router, NavigationExtras } from '@angular/router';
 // config
 import { environment } from '../../../environments/environment';
 
@@ -40,8 +41,20 @@ export class ConversationListPage implements OnInit {
   public supportMode = environment['supportMode'];
 
   public convertMessage = convertMessage;
-
+  user = {
+    name: 'Simon Grimm',
+    website: 'www.ionicacademy.com',
+    address: {
+      zip: 48149,
+      city: 'Muenster',
+      country: 'DE'
+    },
+    interests: [
+      'Ionic', 'Angular', 'YouTube', 'Sports'
+    ]
+  };
   constructor (
+    private router: Router,
     public events: EventsService,
     public modalController: ModalController,
     public databaseProvider: DatabaseProvider,
@@ -60,7 +73,14 @@ export class ConversationListPage implements OnInit {
     this.subscriptions();
   }
 
-
+  openDetailsWithState(conversationSelected) {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        conversationSelected: conversationSelected
+      }
+    };
+    this.router.navigate(['conversation-detail/'+conversationSelected.uid], navigationExtras);
+  }
 
   //------------------------------------------------------------------//
   // BEGIN SUBSCRIPTIONS
@@ -272,29 +292,32 @@ export class ConversationListPage implements OnInit {
    */
   openMessageList(type?: string) {
     const that = this;
-    // console.log('openMessageList:: >>>> conversationSelected ', that.uidConvSelected);
-    // setTimeout(function () {
-    //   const conversationSelected = that.conversations.find(item => item.uid === that.uidConvSelected);
-    //   if (conversationSelected) {
-    //     conversationSelected.is_new = false;
-    //     conversationSelected.status = '0';
-    //     conversationSelected.selected = true;
-    //     that.navProxy.pushDetail(DettaglioConversazionePage, {
-    //       conversationSelected: conversationSelected,
-    //       conversationWith: that.uidConvSelected,
-    //       conversationWithFullname: conversationSelected.conversation_with_fullname,
-    //       channel_type: conversationSelected.channel_type
-    //     });
-    //     that.conversationsHandler.setConversationRead(conversationSelected.uid);
-    //     that.databaseProvider.setUidLastOpenConversation(that.uidConvSelected);
-    //   } else if (!type) {
-    //     if (windowsMatchMedia()) {
-    //       that.navProxy.pushDetail(PlaceholderPage, {});
-    //     }
-    //   }
-    // }, 0);
-    // // if the conversation from the isConversationClosingMap is waiting to be closed 
-    // // deny the click on the conversation
+    console.log('openMessageList:: >>>> conversationSelected ', that.uidConvSelected);
+    
+    
+    setTimeout(function () {
+      const conversationSelected = that.conversations.find(item => item.uid === that.uidConvSelected);
+      if (conversationSelected) {
+        conversationSelected.is_new = false;
+        conversationSelected.status = '0';
+        conversationSelected.selected = true;
+        // that.navProxy.pushDetail(DettaglioConversazionePage, {
+        //   conversationSelected: conversationSelected,
+        //   conversationWith: that.uidConvSelected,
+        //   conversationWithFullname: conversationSelected.conversation_with_fullname,
+        //   channel_type: conversationSelected.channel_type
+        // });
+        // that.conversationsHandler.setConversationRead(conversationSelected.uid);
+        that.openDetailsWithState(conversationSelected);
+        that.databaseProvider.setUidLastOpenConversation(that.uidConvSelected);
+      } else if (!type) {
+        if (windowsMatchMedia()) {
+          // that.navProxy.pushDetail(PlaceholderPage, {});
+        }
+      }
+    }, 0);
+    // if the conversation from the isConversationClosingMap is waiting to be closed 
+    // deny the click on the conversation
     // if (this.tiledeskConversationProvider.getClosingConversation(this.uidConvSelected)) return;
   }
 
