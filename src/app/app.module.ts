@@ -31,7 +31,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 // import { HttpModule } from '@angular/http';
 // import { IonicStorageModule } from '@ionic/storage';
-// import { LinkyModule } from 'angular-linky';
+// import { LinkyModule } from 'ngx-linky';
 
 // import { IonicApp, IonicModule, IonicErrorHandler } from '@ionic/angular';
 
@@ -150,7 +150,6 @@ const appInitializerFn = (appConfig: AppConfigProvider) => {
         deps: [HttpClient] 
       } 
     }),
-
     // LinkyModule,
     // IonicStorageModule.forRoot({
     //   name: "tilechat",

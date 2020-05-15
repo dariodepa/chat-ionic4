@@ -48,7 +48,8 @@ import {
   strip_tags, 
   getSizeImg, 
   urlify, 
-  convertMessageAndUrlify } from '../../services/utils/utils';
+  convertMessageAndUrlify,
+  getColorBck } from '../../services/utils/utils';
 import { EventsService } from '../../services/events-service';
 import { initializeApp } from 'firebase';
 
@@ -75,7 +76,7 @@ export class ConversationDetailPage implements OnInit {
   private conversationHandler: ChatConversationHandler;
 
   private scrollDirection: any = 'bottom';
-  private messages: Array<MessageModel> = [];
+  public messages: Array<MessageModel> = [];
   private arrayLocalImmages: Array<any> = [];
   private projectId: string;
   public messageSelected: any;
@@ -88,24 +89,24 @@ export class ConversationDetailPage implements OnInit {
   private currentUserDetail: UserModel;
   private memberSelected: UserModel;
 
-  private conversationWith: string;
-  private conversationWithFullname: string;
+  public conversationWith: string;
+  public conversationWithFullname: string;
 
   private uidConversationWith: string;
   private fullnameConversationWith: string;
   private conversationType: string;
 
-  private channel_type: string;
-  private online: boolean;
-  private lastConnectionDate: string;
+  public channel_type: string;
+  public online: boolean;
+  public lastConnectionDate: string;
   private messageString: string;
-  private style_message_welcome: boolean;
+  public style_message_welcome: boolean;
 
   private selectedFiles: FileList;
   private isFileSelected: boolean;
-  private openInfoConversation = false;
+  public openInfoConversation = false;
   private openInfoUser = false;                 /** check is open info conversation */
-  private openInfoMessage: boolean;                         /** check is open info message */
+  public openInfoMessage: boolean;                         /** check is open info message */
   private conversationEnabled: boolean = true;
   private isMobile: boolean = true;
 
@@ -132,6 +133,8 @@ export class ConversationDetailPage implements OnInit {
   popupUrl = popupUrl;
   strip_tags = strip_tags;
   convertMessageAndUrlify = convertMessageAndUrlify;
+  getColorBck = getColorBck;
+  // declare var getColorBck: any;
 
   IDConv = null;
   conversationSelected: ConversationModel;
@@ -255,7 +258,7 @@ export class ConversationDetailPage implements OnInit {
     console.log('conversationSelected: ', this.uidConversationWith);
     this.chatPresenceHandler.userIsOnline(this.uidConversationWith);
     this.chatPresenceHandler.lastOnlineForUser(this.uidConversationWith);
-    // this.initConversationHandler();
+    this.initConversationHandler();
     var that = this;
     // NUOVO MESSAGGIO!!
     // this.conversationHandler.obsAdded
@@ -479,24 +482,24 @@ export class ConversationDetailPage implements OnInit {
 
 
 
-  // /**
-  //   *
-  //   */
-  // // LISTEN TO SCROLL POSITION
-  // onScroll(event: any): void {
-  //   console.log('onScroll');
-  //   if (this.scrollMe) {
-  //     const divScrollMe = this.scrollMe.nativeElement;
-  //     const checkContentScrollPosition = this.isContentScrollEnd(divScrollMe);
-  //     if (checkContentScrollPosition) {
-  //       this.showButtonToBottom = false;
-  //       this.NUM_BADGES = 0;
-  //     } else {
-  //       this.showButtonToBottom = true;
-  //       // this.scrollToBottom();
-  //     }
-  //   }
-  // }
+  /**
+    *
+    */
+  // LISTEN TO SCROLL POSITION
+  onScroll(event: any): void {
+    console.log('onScroll');
+    if (this.scrollMe) {
+      const divScrollMe = this.scrollMe.nativeElement;
+      // const checkContentScrollPosition = this.isContentScrollEnd(divScrollMe);
+      // if (checkContentScrollPosition) {
+      //   this.showButtonToBottom = false;
+      //   this.NUM_BADGES = 0;
+      // } else {
+      //   this.showButtonToBottom = true;
+      //   // this.scrollToBottom();
+      // }
+    }
+  }
 
   // private isContentScrollEnd(divScrollMe): boolean {
   //   console.log('isContentScrollEnd');
@@ -609,67 +612,55 @@ export class ConversationDetailPage implements OnInit {
   // }
 
   
-  // /**
-  //  * recupero da chatManager l'handler
-  //  * se NON ESISTE creo un handler e mi connetto 
-  //  * se ESISTE mi connetto
-  //  * carico messaggi
-  //  * attendo un sec se nn arrivano messaggi visualizzo msg wellcome
-  //  */
-  // initConversationHandler() {
-  //   //const loggedUser = this.chatManager.getLoggedUser();
-  //   const that = this;
-  //   this.style_message_welcome = false;
-  //   // CHIEDE ChatConversationHandler  AL CHATMANAGER
-  //   let handler: ChatConversationHandler = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
-  //   console.log('DETTAGLIO CONV - initConversationHandler **************', this.chatManager, handler, this.conversationWith);
-  //   // SE NN C'è LO CREA CON IL conversationWith -> LO CONNETTE -> LO MEMORIZZA NEL CHATMANAGER
-  //   if (!handler) {
-  //     console.log('DETTAGLIO CONV - ENTRO ***', this.conversationHandler);
-  //     //const handler = 
-  //     console.log('DETTAGLIO CONV - CONVERSATION WITH ', this.conversationWith, ' CONVERSATION F-NAME ', this.conversationWithFullname, ' CONVERSATION C U DETAILS ', this.currentUserDetail);
-  //     this.conversationHandler = new ChatConversationHandler(this.events, this.translateService);
-  //     this.conversationHandler.initWithRecipient(this.conversationWith, this.conversationWithFullname, this.currentUserDetail, this.tenant);
-
-  //     //this.chatConversationHandler.initWithRecipient(this.conversationWith, this.conversationWithFullname,this.currentUserDetail,this.tenant);
-
-  //     //handler = this.chatConversationHandler;
-  //     //this.conversationHandler = handler;
-  //     //[self subscribe:handler];
-  //     //[self.conversationHandler restoreMessagesFromDB];
-  //     if (this.conversationWith) {
-  //       //handler.connect();
-  //       this.conversationHandler.connect();
-  //       this.conversationHandler.initWritingMessages();
-  //       this.conversationHandler.getWritingMessages();
-  //       console.log('PRIMA ***', this.chatManager.handlers);
-  //       this.chatManager.addConversationHandler(this.conversationHandler);
-  //       console.log('DOPO ***', this.chatManager.handlers);
-  //       this.messages = this.conversationHandler.messages;
-  //       console.log('DETTAGLIO CONV - MESSAGES ***', this.messages);
-  //       this.doScroll();
-  //     }
-  //   }
-  //   else {
-  //     console.log('NON ENTRO ***', this.conversationHandler, handler);
-  //     //handler.connect();
-  //     //[self subscribe:handler];
-  //     this.conversationHandler = handler;
-  //     this.messages = this.conversationHandler.messages;
-  //     this.doScroll();
-  //   }
-  //   // attendo un secondo e poi visualizzo il messaggio se nn ci sono messaggi
-  //   setTimeout(function () {
-  //     //console.log('setTimeout *** 111',that.messages);
-  //     if (!that.messages || that.messages.length == 0) {
-  //       that.style_message_welcome = true;
-  //       console.log('setTimeout *** 111', that.style_message_welcome);
-  //     } else {
-  //       that.doScroll();
-  //       that.onInfoConversation();
-  //     }
-  //   }, 1000);
-  // }
+  /**
+   * recupero da chatManager l'handler
+   * se NON ESISTE creo un handler e mi connetto 
+   * se ESISTE mi connetto
+   * carico messaggi
+   * attendo un sec se nn arrivano messaggi visualizzo msg wellcome
+   */
+  initConversationHandler() {
+    const that = this;
+    this.style_message_welcome = false;
+    // CHIEDE ChatConversationHandler  AL CHATMANAGER
+    let handler: ChatConversationHandler = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
+    console.log('DETTAGLIO CONV - initConversationHandler **************', this.chatManager, handler, this.conversationWith);
+    // SE NN C'è LO CREA CON IL conversationWith -> LO CONNETTE -> LO MEMORIZZA NEL CHATMANAGER
+    if (!handler) {
+      console.log('DETTAGLIO CONV - ENTRO ***', this.conversationHandler);
+      console.log('DETTAGLIO CONV - CONVERSATION WITH ', this.conversationWith, ' CONVERSATION F-NAME ', this.conversationWithFullname, ' CONVERSATION C U DETAILS ', this.currentUserDetail);
+      this.conversationHandler = new ChatConversationHandler(this.events, this.translateService);
+      this.conversationHandler.initWithRecipient(this.conversationWith, this.conversationWithFullname, this.currentUserDetail, this.tenant);
+      if (this.conversationWith) {
+        this.conversationHandler.connect();
+        this.conversationHandler.initWritingMessages();
+        this.conversationHandler.getWritingMessages();
+        console.log('PRIMA ***', this.chatManager.handlers);
+        this.chatManager.addConversationHandler(this.conversationHandler);
+        console.log('DOPO ***', this.chatManager.handlers);
+        this.messages = this.conversationHandler.messages;
+        console.log('DETTAGLIO CONV - MESSAGES ***', this.messages);
+        // this.doScroll();
+      }
+    }
+    else {
+      console.log('NON ENTRO ***', this.conversationHandler, handler);
+      this.conversationHandler = handler;
+      this.messages = this.conversationHandler.messages;
+      // this.doScroll();
+    }
+    // attendo un secondo e poi visualizzo il messaggio se nn ci sono messaggi
+    setTimeout(function () {
+      //console.log('setTimeout *** 111',that.messages);
+      // if (!that.messages || that.messages.length == 0) {
+      //   that.style_message_welcome = true;
+      //   console.log('setTimeout *** 111', that.style_message_welcome);
+      // } else {
+      //   // that.doScroll();
+      //   // that.onInfoConversation();
+      // }
+    }, 1000);
+  }
   // /**
   //  * chiamato dal subscribe('listMessages:added')
   //  * ogni volta che viene aggiunto un messaggio
@@ -741,35 +732,35 @@ export class ConversationDetailPage implements OnInit {
   /**
    * Scroll to bottom of page after a short delay.
    */
-  // scrollBottom() {
-  //   console.log('scrollBottom');
-  //   var scrollDiv = document.getElementById("scroll-me");
-  //   if (scrollDiv) {
-  //     scrollDiv.scrollTop = scrollDiv.scrollHeight;
-  //   }
-  // }
+  scrollBottom() {
+    console.log('scrollBottom');
+    var scrollDiv = document.getElementById("scroll-me");
+    if (scrollDiv) {
+      scrollDiv.scrollTop = scrollDiv.scrollHeight;
+    }
+  }
   /**
    * Scroll to top of the page after a short delay.
    */
-  // scrollTop() {
-  //   console.log('scrollTop');
-  //   let that = this;
-  //   setTimeout(function () {
-  //     that.content.scrollToTop();
-  //   }, 1);
-  // }
+  scrollTop() {
+    console.log('scrollTop');
+    let that = this;
+    setTimeout(function () {
+      that.content.scrollToTop();
+    }, 1);
+  }
 
   /**
    * Scroll depending on the direction.
    */
-  // doScroll() {
-  //   console.log('doScroll');
-  //   if (this.scrollDirection == 'bottom') {
-  //     this.scrollBottom();
-  //   } else if (this.scrollDirection == 'top') {
-  //     this.scrollTop();
-  //   }
-  // }
+  doScroll() {
+    console.log('doScroll');
+    if (this.scrollDirection == 'bottom') {
+      this.scrollBottom();
+    } else if (this.scrollDirection == 'top') {
+      this.scrollTop();
+    }
+  }
   // //// END Scroll managemant functions ////
 
 
@@ -819,11 +810,11 @@ export class ConversationDetailPage implements OnInit {
   // /** 
   //  * 
   // */
-  // onOpenCloseInfoConversation() {
-  //   this.openInfoMessage = false;
-  //   this.openInfoConversation = !this.openInfoConversation;
-  //   console.log('onOpenCloseInfoConversation **************', this.openInfoConversation);
-  // }
+  onOpenCloseInfoConversation() {
+    this.openInfoMessage = false;
+    this.openInfoConversation = !this.openInfoConversation;
+    console.log('onOpenCloseInfoConversation **************', this.openInfoConversation);
+  }
 
   // /** */
   // onInfoConversation() {
@@ -848,33 +839,33 @@ export class ConversationDetailPage implements OnInit {
   //   //this.events.publish('changeStatusUserSelected', (this.online, this.lastConnectionDate));
   // }
 
-  // /**
-  //  * Check if the user is the sender of the message.
-  //  * @param message 
-  //  */
-  // isSender(message) {
-  //   //console.log('isSender');
+  /**
+   * Check if the user is the sender of the message.
+   * @param message 
+   */
+  // public isSender(message) {
+  //   console.log('isSender');
   //   const currentUser = this.chatManager.getLoggedUser();
   //   return this.conversationHandler.isSender(message, currentUser);
   // }
-  // /**
-  //  * se il messaggio non è vuoto
-  //  * 1 - ripristino l'altezza del box input a quella di default
-  //  * 2 - invio il messaggio
-  //  * 3 - se l'invio è andato a buon fine mi posiziono sull'ultimo messaggio
-  //  * @param msg 
-  //  */
-  // sendMessage(msg, type, metadata?) {
-  //   (metadata) ? metadata = metadata : metadata = '';
-  //   console.log("SEND MESSAGE: ", msg, this.messages);
-  //   if (msg && msg.trim() != '' || type !== TYPE_MSG_TEXT) {
-  //     //const textMsg = replaceBr(msg);
-  //     this.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('textarea')[0].style.height = MIN_HEIGHT_TEXTAREA + "px";
-  //     this.conversationHandler.sendMessage(msg, type, metadata, this.conversationWith, this.conversationWithFullname, this.channel_type);
-  //     this.chatManager.conversationsHandler.uidConvSelected = this.conversationWith;
-  //     this.doScroll();
-  //   }
-  // }
+  /**
+   * se il messaggio non è vuoto
+   * 1 - ripristino l'altezza del box input a quella di default
+   * 2 - invio il messaggio
+   * 3 - se l'invio è andato a buon fine mi posiziono sull'ultimo messaggio
+   * @param msg 
+   */
+  sendMessage(msg, type, metadata?) {
+    (metadata) ? metadata = metadata : metadata = '';
+    console.log("SEND MESSAGE: ", msg, this.messages);
+    if (msg && msg.trim() != '' || type !== TYPE_MSG_TEXT) {
+      //const textMsg = replaceBr(msg);
+      // this.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('textarea')[0].style.height = MIN_HEIGHT_TEXTAREA + "px";
+      this.conversationHandler.sendMessage(msg, type, metadata, this.conversationWith, this.conversationWithFullname, this.channel_type);
+      this.chatManager.conversationsHandler.uidConvSelected = this.conversationWith;
+      this.doScroll();
+    }
+  }
 
   // /**
   //  * 
@@ -893,14 +884,14 @@ export class ConversationDetailPage implements OnInit {
   //  * e lo passo al metodo di invio
   //  * @param messageString 
   //  */
-  // controlOfMessage(messageString) {
-  //   console.log('controlOfMessage **************');
-  //   messageString = messageString.replace(/(\r\n|\n|\r)/gm, "");
-  //   if (messageString.trim() != '') {
-  //     this.sendMessage(messageString, TYPE_MSG_TEXT);
-  //   }
-  //   this.messageString = "";
-  // }
+  public controlOfMessage(messageString) {
+    console.log('controlOfMessage **************');
+    messageString = messageString.replace(/(\r\n|\n|\r)/gm, "");
+    if (messageString.trim() != '') {
+      this.sendMessage(messageString, TYPE_MSG_TEXT);
+    }
+    this.messageString = "";
+  }
   // /**
   //  * invocata dalla pressione del tasto invio sul campo di input messaggio
   //  * se il messaggio non è vuoto lo passo al metodo di controllo
@@ -929,13 +920,13 @@ export class ConversationDetailPage implements OnInit {
   //   });
   // }
   
-  // /**
-  //  * 
-  //  * @param message 
-  //  */
-  // getSizeImg(message): any {
-  //   return getSizeImg(message, MAX_WIDTH_IMAGES);
-  // }
+  /**
+   * 
+   * @param message 
+   */
+  getSizeImg(message): any {
+    return getSizeImg(message, MAX_WIDTH_IMAGES);
+  }
 
   // // setUrlString(text, name): any {
   // //   return name;
@@ -946,10 +937,10 @@ export class ConversationDetailPage implements OnInit {
   // //   // }
   // // }
 
-  // /** */
-  // showButtonInfo() {
-  //   //console.log('showButtonInfo');
-  // }
+  /** */
+  showButtonInfo() {
+    //console.log('showButtonInfo');
+  }
   // /**
   //  * 
   //  * @param msg 
@@ -958,17 +949,17 @@ export class ConversationDetailPage implements OnInit {
   //   console.log('showDetailMessage', msg);
   //   //this.presentPopover(msg);
   // }
-  // /**
-  // * apro il menu delle opzioni 
-  // * (metodo richiamato da html) 
-  // * alla chiusura controllo su quale opzione ho premuto e attivo l'azione corrispondete
-  // */
-  // presentPopover(event, msg) {
-  //   console.log('presentPopover');
-  //   let popover = this.popoverCtrl.create(PopoverPage, { typePopup: TYPE_POPUP_DETAIL_MESSAGE, message: msg });
-  //   popover.present({
-  //     ev: event
-  //   });
+  /**
+  * apro il menu delle opzioni 
+  * (metodo richiamato da html) 
+  * alla chiusura controllo su quale opzione ho premuto e attivo l'azione corrispondete
+  */
+  presentPopover(event, msg) {
+    console.log('presentPopover');
+    // let popover = this.popoverCtrl.create(PopoverPage, { typePopup: TYPE_POPUP_DETAIL_MESSAGE, message: msg });
+    // popover.present({
+    //   ev: event
+    // });
   //   /**
   //    * 
   //    */
@@ -983,7 +974,7 @@ export class ConversationDetailPage implements OnInit {
   //       }
   //     }
   //   });
-  // }
+  }
   // //// END FUNZIONI RICHIAMATE DA HTML ////
 
 
@@ -1181,53 +1172,54 @@ export class ConversationDetailPage implements OnInit {
   //   this.doScroll();
   // }
 
-  // public isImage(message: any) {
-  //   if (message && message.type && message.metadata && message.metadata.src && message.type === 'image') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
-  // public isFile(message: any) {
-  //   if (message && message.type && message.metadata && message.metadata.src && message.type === 'file') {
-  //     return false;
-  //   }
-  //   return false;
-  // }
-
-  // /**
-  //  * messageChange
-  //  * 
-  //  * @param event 
-  //  */
-  // public messageChange(event) { 
-  //   const that = this;
-  //   console.log("event:::",event);
-  //   try {
-  //     if (event) {
-  //       console.log("event.value:: ", event);
-  //       var str = event.value;
-  //       that.setWritingMessages(str);
-  //       setTimeout(function () {
-  //         var pos = str.lastIndexOf("/");
-  //         console.log("str:: ", str);
-  //         console.log("pos:: ", pos);
-  //         if(pos >= 0 ) {
-  //           // && that.tagsCanned.length > 0
-  //           var strSearch = str.substr(pos+1);
-  //           that.loadTagsCanned(strSearch);
-  //           //that.showTagsCanned(strSearch);
-  //           //that.loadTagsCanned(strSearch);
-  //         } else {
-  //           that.tagsCannedFilter = [];
-  //         }
-  //       }, 300);
-  //       that.resizeTextArea();
-  //     }
-  //   } catch (err) {
-  //     console.log("error: ", err)
-  //   }    
-  // }
+  public isImage(message: any) {
+    if (message && message.type && message.metadata && message.metadata.src && message.type === 'image') {
+      return true;
+    }
+    return false;
+  }
+  public isFile(message: any) {
+    if (message && message.type && message.metadata && message.metadata.src && message.type === 'file') {
+      return true;
+    }
+    return false;
+  }
+  public isInfo(message: any) {
+    if(message.attributes && (message.attributes.subtype == 'info' || message.attributes.subtype == 'info/support')) {
+      return true;
+    }
+    return false;
+  }
+  /**
+   * messageChange
+   * 
+   * @param event 
+   */
+  public messageChange(event) { 
+    const that = this;
+    console.log("event:::",event);
+    try {
+      if (event) {
+        console.log("event.value:: ", event);
+        var str = event.value;
+        // that.setWritingMessages(str);
+        setTimeout(function () {
+          var pos = str.lastIndexOf("/");
+          console.log("str:: ", str);
+          console.log("pos:: ", pos);
+          if(pos >= 0 ) {
+            var strSearch = str.substr(pos+1);
+            // that.loadTagsCanned(strSearch);
+          } else {
+            that.tagsCannedFilter = [];
+          }
+        }, 300);
+        // that.resizeTextArea();
+      }
+    } catch (err) {
+      console.log("error: ", err)
+    }    
+  }
   
   // /**
   //  * 

@@ -37,6 +37,8 @@ export class ChatConversationHandler {
   public listMembersInfo: any[];
   private setTimeoutWritingMessages;
 
+  private lastDate: string = "";
+
 
   constructor(
     private events: EventsService,
@@ -87,7 +89,7 @@ export class ChatConversationHandler {
    * mi sottoscrivo a change, removed, added
    */
   connect() {
-    var lastDate: string = "";
+    this.lastDate = '';
     const that = this;
     this.urlNodeFirebase = conversationMessagesRef(this.tenant, this.loggedUser.uid);
     this.urlNodeFirebase = this.urlNodeFirebase+this.conversationWith;
@@ -99,12 +101,14 @@ export class ChatConversationHandler {
     //// AGGIUNTA MESSAGGIO ////
     this.messagesRef.on("child_added", function (childSnapshot) {
       const itemMsg = childSnapshot.val();
+      
       // imposto il giorno del messaggio per visualizzare o nascondere l'header data
-      console.log("that.translate *****", that.translate);
-      let calcolaData = setHeaderDate(that.translate, itemMsg['timestamp'], lastDate);
+      // console.log("that.translate *****", that.translate);
+      let calcolaData = setHeaderDate(that.translate, itemMsg['timestamp'], that.lastDate);
       if (calcolaData != null) {
-        lastDate = calcolaData;
+        that.lastDate = calcolaData;
       }
+      console.log("calcolaData *****", calcolaData);
       // controllo fatto per i gruppi da rifattorizzare
       (!itemMsg.sender_fullname || itemMsg.sender_fullname == 'undefined') ? itemMsg.sender_fullname = itemMsg.sender : itemMsg.sender_fullname;
       // bonifico messaggio da url
@@ -122,14 +126,30 @@ export class ChatConversationHandler {
         }
       }
 
+      let isSender = that.isSender(itemMsg['sender'], that.loggedUser);
+
       // creo oggetto messaggio e lo aggiungo all'array dei messaggi
-      const msg = new MessageModel(childSnapshot.key, itemMsg['language'], itemMsg['recipient'], itemMsg['recipient_fullname'], itemMsg['sender'], itemMsg['sender_fullname'], itemMsg['status'], itemMsg['metadata'], messageText, itemMsg['timestamp'], calcolaData, itemMsg['type'], itemMsg['attributes'], itemMsg['channel_type'], false);
-      //console.log("child_added *****", itemMsg['timestamp'], that.messages, msg);
-      that.isSender(msg, that.loggedUser);
+      const msg = new MessageModel(
+        childSnapshot.key, 
+        itemMsg['language'], 
+        itemMsg['recipient'], 
+        itemMsg['recipient_fullname'], 
+        itemMsg['sender'], 
+        itemMsg['sender_fullname'], 
+        itemMsg['status'], 
+        itemMsg['metadata'], 
+        messageText, 
+        itemMsg['timestamp'], 
+        calcolaData, 
+        itemMsg['type'], 
+        itemMsg['attributes'], 
+        itemMsg['channel_type'], 
+        isSender
+      );
       if (msg.attributes && msg.attributes.subtype && (msg.attributes.subtype === 'info' || msg.attributes.subtype === 'info/support')) {
         that.translateInfoSupportMessages(msg);
       }
-
+      console.log("child_added *****", msg);
       that.messages.push(msg);
       that.messages.sort(compareValues('timestamp', 'asc'));
 
@@ -151,10 +171,10 @@ export class ChatConversationHandler {
     this.messagesRef.on("child_changed", function(childSnapshot) {
       const itemMsg = childSnapshot.val();
       // imposto il giorno del messaggio per visualizzare o nascondere l'header data
-      const calcolaData = setHeaderDate(that.translate, itemMsg['timestamp'], lastDate);
-      if (calcolaData != null) {
-        lastDate = calcolaData;
-      }
+      // const calcolaData = setHeaderDate(that.translate, itemMsg['timestamp'], this.lastDate);
+      // if (calcolaData != null) {
+      //   this.lastDate = calcolaData;
+      // }
       // controllo fatto per i gruppi da rifattorizzare
       (!itemMsg.sender_fullname || itemMsg.sender_fullname == 'undefined') ? itemMsg.sender_fullname = itemMsg.sender : itemMsg.sender_fullname;
       // bonifico messaggio da url
@@ -165,7 +185,23 @@ export class ChatConversationHandler {
         messageText = htmlEntities(itemMsg['text']);
       }
       // creo oggetto messaggio e lo aggiungo all'array dei messaggi
-      const msg = new MessageModel(childSnapshot.key, itemMsg['language'], itemMsg['recipient'], itemMsg['recipient_fullname'], itemMsg['sender'], itemMsg['sender_fullname'], itemMsg['status'], itemMsg['metadata'], messageText, itemMsg['timestamp'], calcolaData, itemMsg['type'], itemMsg['attributes'], itemMsg['channel_type'], false);
+      const msg = new MessageModel(
+        childSnapshot.key, 
+        itemMsg['language'], 
+        itemMsg['recipient'], 
+        itemMsg['recipient_fullname'], 
+        itemMsg['sender'], 
+        itemMsg['sender_fullname'], 
+        itemMsg['status'], 
+        itemMsg['metadata'], 
+        messageText, 
+        itemMsg['timestamp'], 
+        null, 
+        itemMsg['type'], 
+        itemMsg['attributes'], 
+        itemMsg['channel_type'], 
+        false
+      );
       const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
 
       if (msg.attributes && msg.attributes.subtype && (msg.attributes.subtype === 'info' || msg.attributes.subtype === 'info/support')) {
@@ -210,26 +246,38 @@ export class ChatConversationHandler {
       // [BEGIN MEMBER_JOINED_GROUP]
       if ((message.attributes.messagelabel && message.attributes.messagelabel.parameters && message.attributes.messagelabel.key === 'MEMBER_JOINED_GROUP')) {
         
-        var subject;
-        var verb;
-        var complement;
-        
+        var subject:string;
+        var verb:string;
+        var complement:string;
         if (message.attributes.messagelabel.parameters.member_id === this.loggedUser.uid) {
-          // logged user has been added to the group
-          subject = this.translate.get('INFO_SUPPORT_USER_ADDED_SUBJECT')['value'];
-          verb = this.translate.get('INFO_SUPPORT_USER_ADDED_YOU_VERB')['value'];
-          complement = this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT')['value'];
+          this.translate.get('INFO_SUPPORT_USER_ADDED_SUBJECT').subscribe((res: string) => {      
+            subject = res;
+          });
+          this.translate.get('INFO_SUPPORT_USER_ADDED_YOU_VERB').subscribe((res: string) => {      
+            verb = res;
+          });
+          this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT').subscribe((res: string) => {      
+            complement = res;
+          });
         } else {
           if (message.attributes.messagelabel.parameters.fullname) {
             // other user has been added to the group (and he has a fullname)
             subject = message.attributes.messagelabel.parameters.fullname;
-            verb = this.translate.get('INFO_SUPPORT_USER_ADDED_VERB')['value'];
-            complement = this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT')['value'];
+            this.translate.get('INFO_SUPPORT_USER_ADDED_VERB').subscribe((res: string) => {      
+              verb = res;
+            });
+            this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT').subscribe((res: string) => {      
+              complement = res;
+            });
           } else {
             // other user has been added to the group (and he has not a fullname, so use hes useruid)
             subject = message.attributes.messagelabel.parameters.member_id;
-            verb = this.translate.get('INFO_SUPPORT_USER_ADDED_VERB')['value'];
-            complement = this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT')['value'];
+            this.translate.get('INFO_SUPPORT_USER_ADDED_VERB').subscribe((res: string) => {      
+              verb = res;
+            });
+            this.translate.get('INFO_SUPPORT_USER_ADDED_COMPLEMENT').subscribe((res: string) => {      
+              complement = res;
+            });
           }
         }
 
@@ -246,13 +294,17 @@ export class ChatConversationHandler {
 
       // [END CHAT_REOPENED]
       else if ((message.attributes.messagelabel && message.attributes.messagelabel.key === 'CHAT_REOPENED')) {
-        message.text = this.translate.get('INFO_SUPPORT_CHAT_REOPENED')['value'];
+        this.translate.get('INFO_SUPPORT_CHAT_REOPENED').subscribe((res: string) => {      
+          message.text = res;
+        });
       }
       // [END CHAT_REOPENED]
 
       // [END CHAT_CLOSED]
       else if ((message.attributes.messagelabel && message.attributes.messagelabel.key === 'CHAT_CLOSED')) {
-        message.text = this.translate.get('INFO_SUPPORT_CHAT_CLOSED')['value'];
+        this.translate.get('INFO_SUPPORT_CHAT_CLOSED').subscribe((res: string) => {      
+          message.text = res;
+        });
       }
       // [END CHAT_CLOSED]
     }
@@ -283,24 +335,23 @@ export class ChatConversationHandler {
   /**
    * controllo se il messaggio è stato inviato da loggerUser
    * richiamato dalla pagina elenco messaggi della conversazione
-   * @param message 
+   * @param sender 
    */
-  isSender(message, currentUser) {
+  isSender(sender, currentUser) {
     //const currentUser = this.loggedUser;//this.chatManager.getLoggedUser();
-    console.log("isSender::::: ", message.sender, currentUser.uid);
+    console.log("isSender::::: ", sender, currentUser.uid);
     if (currentUser){
-      if (message.sender == currentUser.uid) {
-        message.isSender = true;
+      if (sender == currentUser.uid) {
+        //message.isSender = true;
         return true;
       } else {
-        message.isSender = false;
+        //message.isSender = false;
         return false;
       }
     } else {
-      message.isSender = false;
+      //message.isSender = false;
       return false;
     }
-    
   }
 
   /**
@@ -317,6 +368,7 @@ export class ChatConversationHandler {
     const that = this;
     (!channel_type || channel_type == 'undefined')?channel_type='direct':channel_type;
     console.log('messages: ',  this.messages);
+    console.log('loggedUser: ',  this.loggedUser);
     console.log("SEND MESSAGE: ", msg, channel_type);
     const now: Date = new Date();
     // const timestamp = now.valueOf();
@@ -326,7 +378,7 @@ export class ChatConversationHandler {
     console.log('timestamp: ',firebase.database['ServerValue']['TIMESTAMP']);
     
     const language = document.documentElement.lang;
-    const sender_fullname = this.loggedUser.fullname;
+    const sender_fullname = this.loggedUser.email;
     const recipient_fullname = conversationWithDetailFullname;
     const dateSendingMessage = setHeaderDate(this.translate, timestamp);
     let firebaseMessagesCustomUid = firebase.database().ref(this.urlNodeFirebase);

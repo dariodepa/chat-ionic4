@@ -109,8 +109,14 @@ export function setHeaderDate_old(translate, timestamp, lastDate?): string {
 
   var date = new Date(timestamp);
   let now: Date = new Date();
-  var LABEL_TODAY = translate.get('LABEL_TODAY')['value'];
-  var LABEL_TOMORROW = translate.get('LABEL_TOMORROW')['value'];
+  var LABEL_TODAY;// = translate.get('LABEL_TODAY')['value'];
+  var LABEL_TOMORROW;// = translate.get('LABEL_TOMORROW')['value'];
+  translate.get('LABEL_TODAY').subscribe((res: string) => {      
+    LABEL_TODAY = res;
+  });
+  translate.get('LABEL_TOMORROW').subscribe((res: string) => {      
+    LABEL_TOMORROW = res;
+  });
   var labelDays: string = LABEL_TODAY;
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   // Esclude l'ora ed il fuso orario
@@ -140,29 +146,39 @@ export function setHeaderDate_old(translate, timestamp, lastDate?): string {
 }
 
 export function setHeaderDate(translate, timestamp, lastDate?): string {
-  var LABEL_TODAY = translate.get('LABEL_TODAY')['value'];
-  var LABEL_TOMORROW = translate.get('LABEL_TOMORROW')['value'];
-
+  var LABEL_TODAY;// = translate.get('LABEL_TODAY')['value'];
+  var LABEL_TOMORROW;// = translate.get('LABEL_TOMORROW')['value'];
+  translate.get('LABEL_TODAY').subscribe((res: string) => {      
+    LABEL_TODAY = res;
+  });
+  translate.get('LABEL_TOMORROW').subscribe((res: string) => {      
+    LABEL_TOMORROW = res;
+  });
   const date = new Date(timestamp);
   const now: Date = new Date();
   let labelDays = '';
   if (now.getFullYear() !== date.getFullYear()) {
+    // quest'anno: data esatta
     const month = date.getMonth() + 1;
     labelDays = date.getDay() + '/' + month + '/' + date.getFullYear();
   } else if (now.getMonth() !== date.getMonth()) {
+    // questo mese: data esatta
     const month = date.getMonth() + 1;
     labelDays = date.getDay() + '/' + month + '/' + date.getFullYear();
   } else if (now.getDay() === date.getDay()) {
+    // oggi: oggi
     labelDays = LABEL_TODAY;
   } else if (now.getDay() - date.getDay() === 1) {
+    // ieri: ieri
     labelDays = LABEL_TOMORROW;
   } else {
+    // questa settimana: giorno
     labelDays = convertDayToString(translate, date.getDay());
   }
   // se le date sono diverse o la data di riferimento non è impostata
   // ritorna la data calcolata
   // altrimenti torna null
-  if (lastDate != labelDays || lastDate == null || lastDate == '') {
+  if (lastDate != labelDays || lastDate == null || lastDate == '' || lastDate == undefined) {
     return labelDays;
   } else {
     return null;
@@ -178,11 +194,23 @@ export function setHeaderDate(translate, timestamp, lastDate?): string {
  */
 export function setLastDate(translate, timestamp): string {
 
-  var LABEL_TODAY = translate.get('LABEL_TODAY')['value'];
-  var LABEL_TOMORROW = translate.get('LABEL_TOMORROW')['value'];
-  var LABEL_TO = translate.get('LABEL_TO')['value'];
-  var LABEL_LAST_ACCESS = translate.get('LABEL_LAST_ACCESS')['value'];
+  var LABEL_TODAY; // = translate.get('LABEL_TODAY')['value'];
+  var LABEL_TOMORROW; // = translate.get('LABEL_TOMORROW')['value'];
+  var LABEL_TO; // = translate.get('LABEL_TO')['value'];
+  var LABEL_LAST_ACCESS; // = translate.get('LABEL_LAST_ACCESS')['value'];
 
+  translate.get('LABEL_TODAY').subscribe((res: string) => {      
+    LABEL_TODAY = res;
+  });
+  translate.get('LABEL_TOMORROW').subscribe((res: string) => {      
+    LABEL_TOMORROW = res;
+  });
+  translate.get('LABEL_TO').subscribe((res: string) => {      
+    LABEL_TO = res;
+  });
+  translate.get('LABEL_LAST_ACCESS').subscribe((res: string) => {      
+    LABEL_LAST_ACCESS = res;
+  });
   var date = new Date(timestamp);
   let now: Date = new Date();
   var labelDays: string = "";
@@ -207,7 +235,10 @@ export function setLastDate(translate, timestamp): string {
 
 export function convertDayToString(translate, day) {
   //['Lunedì', 'Martedì', 'Mercoledì','Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-  var ARRAY_DAYS = translate.get('ARRAY_DAYS')['value'];
+  var ARRAY_DAYS;// = translate.get('ARRAY_DAYS')['value'];
+  translate.get('ARRAY_DAYS').subscribe((res: string) => {      
+    ARRAY_DAYS = res;
+  });
   return ARRAY_DAYS[day];
 }
 
@@ -361,9 +392,14 @@ export function isInArray(key: string, array: Array<string>) {
 
 export function createConfirm(translate, alertCtrl, events, title, message, action, onlyOkButton) {
 
-  var LABEL_ANNULLA = translate.get('CLOSE_ALERT_CANCEL_LABEL')['value'];
-  var LABEL_OK = translate.get('CLOSE_ALERT_CONFIRM_LABEL')['value'];
-
+  var LABEL_ANNULLA;// = translate.get('CLOSE_ALERT_CANCEL_LABEL')['value'];
+  var LABEL_OK;// = translate.get('CLOSE_ALERT_CONFIRM_LABEL')['value'];
+  translate.get('LABEL_ANNULLA').subscribe((res: string) => {      
+    LABEL_ANNULLA = res;
+  });
+  translate.get('LABEL_OK').subscribe((res: string) => {      
+    LABEL_OK = res;
+  });
   var buttons;
   if (onlyOkButton) {
     buttons = [

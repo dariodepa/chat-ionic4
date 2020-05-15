@@ -255,7 +255,7 @@ export class ChatConversationsHandler {
             conv.recipient_fullname = conv.recipient;
         }
         // 2 
-        var LABEL_TU;
+        var LABEL_TU:string;
         this.translate.get('LABEL_TU').subscribe((res: string) => {      
             LABEL_TU = res;
         });

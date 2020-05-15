@@ -148,7 +148,10 @@ export class ChatArchivedConversationsHandler {
      */
     private completeConversation(conv): ConversationModel {
         //debugger;
-        var LABEL_TU = this.translate.get('LABEL_TU')['value'];
+        var LABEL_TU: string;
+        this.translate.get('LABEL_TU').subscribe((res: string) => {      
+            LABEL_TU = res;
+          });
         conv.selected = false;
         if (!conv.sender_fullname || conv.sender_fullname === 'undefined' || conv.sender_fullname.trim() === '') {
             conv.sender_fullname = conv.sender;

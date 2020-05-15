@@ -5,25 +5,23 @@
 <ng-template #showConversation>
   <ion-header no-border>
     <ion-toolbar>
-      <ion-title>
-
-
+      <ion-title [class.info-open]="openInfoConversation || openInfoMessage">
         <ion-avatar>
           <div #avatarPlaceholder class="avatar-placeholder" [style.background-color]="conversationSelected.color" [innerHTML]="conversationSelected.avatar"></div>
           <div #avatarImage *ngIf="conversationSelected.image" class="avatar-profile" [style.background-image]="'url(' + conversationSelected.image + ')'"></div>
         </ion-avatar>
-
-        <div *ngIf="conversationWith" class="tile-info-with" [class.info-open]="openInfoConversation || openInfoMessage">         
+        <div *ngIf="conversationWith" class="tile-info-with">   
+          <span *ngIf="conversationSelected.channel_type == TYPE_DIRECT" class="tile-point" [ngStyle]="{ 'background-color':online?COLOR_GREEN:COLOR_RED }">&nbsp;</span>      
           <span class="tile-username">{{conversationWithFullname?conversationWithFullname:''}}</span>
  
-          <span *ngIf="!isTypings; then yesTypings else noTypings"></span>
+          <span *ngIf="isTypings; then yesTypings else noTypings"></span>
             
             <ng-template #yesTypings>
               <div class="tile-last-activity">
-                <span class="tile-spinner active" id="tile-spinner">
-                  <div class="tile-bounce1"></div>
-                  <div class="tile-bounce2"></div>
-                  <div class="tile-bounce3"></div>
+                <span class="spinner active" id="tile-spinner">
+                  <div class="bounce1"></div>
+                  <div class="bounce2"></div>
+                  <div class="bounce3"></div>
                   <span></span>
                 </span>
                 <span class="tile-typing-now">{{nameUserTypingNow}} {{ 'LABEL_IS_WRITING' | translate }}</span>
@@ -32,14 +30,13 @@
   
             <ng-template #noTypings>
               <div class="tile-last-activity">
-                <span *ngIf="conversationSelected.channel_type == TYPE_DIRECT" class="tile-point" [ngStyle]="{ 'background-color':online?COLOR_GREEN:COLOR_RED }">&nbsp;</span>
                 <span *ngIf="conversationSelected.channel_type == TYPE_DIRECT">
                     <span *ngIf="online; then userActive else userInactive"></span>
                     <ng-template #userActive>
-                      <div class="tile-last-activity">{{ 'LABEL_ACTIVE_NOW' | translate }}</div>
+                      <div>{{ 'LABEL_ACTIVE_NOW' | translate }}</div>
                     </ng-template>
                     <ng-template #userInactive>
-                      <div class="tile-last-activity">{{lastConnectionDate}}</div>
+                      <div>{{lastConnectionDate}}</div>
                     </ng-template>
                 </span>
               </div>
@@ -47,19 +44,169 @@
   
         </div>
       </ion-title>
-  
-      <ion-buttons end *ngIf="openInfoConversation === false">
-          <button end ion-button icon-only (click)="onOpenCloseInfoConversation()">
-            <ion-icon name="information-circle"></ion-icon>
+
+      <ion-buttons slot="end" *ngIf="!openInfoConversation">
+          <button ion-button icon-only (click)="onOpenCloseInfoConversation()">
+            <span class="material-icons">information-circle</span>
           </button>
       </ion-buttons>
   
-  
     </ion-toolbar>
   </ion-header>
+
+
+  <ion-content class="messagesView " [class.halfscreen]="openInfoConversation || openInfoMessage">
+      <span *ngIf="messages.length > 0;then content_messages else contentMessageWelcome">here is ignored</span>
+      
+      <ng-template #content_messages>
+        <div #scrollMe id="scroll-me" style="height:100%; overflow-y:auto;" (scroll)="onScroll($event)">
+          <div id="chat21-contentScroll">
+            <ion-list no-lines>
+              <div *ngFor="let message of messages; let i = index">
+                
+                <div *ngIf="message && message.headerDate && message.headerDate != ''">
+                  <ion-item class="ion-no-padding" text-wrap lines="none">
+                    <div class="row-day">
+                      <div class="header-day">{{message.headerDate}}</div>
+                    </div>
+                  </ion-item>
+                </div>
+
+                <ion-item class="ion-no-padding" text-wrap lines="none">
+                  <span *ngIf="message.isSender; then contentMine else contentOther"></span>
+                
+                  <ng-template #contentMine >
+                    <div class="message message-mine" [class.first-message]="(messages[i-1] && messages[i-1].sender != message.sender) || message.headerDate || (messages[i-1] && isInfo(messages[i-1]))" >
+                      
+                      <div class="bobble-message" (mouseover)="showButtonInfo()">
+                        <span class="buttonInfo" (click)="presentPopover($event, message)"> </span>
+                        <div *ngIf="message.type == 'image';" (click)="popupUrl(message.metadata.src,'windowName')">
+                            <img class="message-content message-content-image" [src]="message.metadata.src" [width]="getSizeImg(message).width"
+                            [height]="getSizeImg(message).height" />
+                        </div>
+                        <div *ngIf="message.type == 'file';" class="message-content message-content-text" [innerHTML]="urlify(message.metadata.src, message.metadata.name)"></div>
+                        <div *ngIf="message.type == 'text';">
+                          <div *ngIf="isPopupUrl(message.text); then contentPopup else contentNewTab">here is ignored</div>
+                          <ng-template #contentPopup>
+                            <div style="text-decoration: underline; padding:8px; cursor: pointer;" (click)="popupUrl(message.text,'windowName')">{{strip_tags(message.text)}} contentMine </div>
+                          </ng-template>
+                          <ng-template #contentNewTab>
+                            <div class="message-content message-content-text" [innerHTML]="message.text"></div>
+                          </ng-template>
+                        </div>
+                        <div class="timestamp-message right">{{message.timestamp | date: 'H:mm'}}</div>
+                      </div>
+
+
+                      <div class="attribute-message">
+                        <div class="status-message">
+                          <span *ngIf="!message.status" class="material-icons">
+                            access_time
+                          </span>
+                          <span *ngIf="message.status==MSG_STATUS_SENT" class="material-icons">
+                            done
+                          </span>
+                          <span *ngIf="message.status==MSG_STATUS_RETURN_RECEIPT" class="material-icons">
+                            done_all
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </ng-template>
+
+                  <ng-template #contentOther>
+                    <div *ngIf="isInfo(message) then conversWithSystem else conversWithOther"></div>
+                  
+                    <ng-template #conversWithSystem>
+                      <div class="message-content-info-support">
+                        <span>{{ message.text }}</span>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #conversWithOther>
+                      <div class="message message-other" [class.first-message]="(messages[i-1] && messages[i-1].sender != message.sender) || message.headerDate || (messages[i-1] && isInfo(messages[i-1]))"  (mouseover)="showButtonInfo()">
+                        
+                        <span class="button-info" [ngClass]="message.uid" (click)="presentPopover($event, message)"></span>
+                        
+                        <div class="bobble-message" (mouseover)="showButtonInfo()">
+                          <div *ngIf="channel_type=='group'" class="message-sender-fullname" [style.color]="getColorBck(message.sender_fullname)">{{message.sender_fullname}}</div>
+                          
+                          <div *ngIf="isImage(message);" (click)="popupUrl(message.metadata.src,'windowName')">
+                            <img class="message-content message-content-image" [src]="message.metadata.src" [width]="getSizeImg(message).width" [height]="getSizeImg(message).height" />
+                          </div>
+                          
+                          <div *ngIf="isFile(message);" class="message-content message-content-text" [innerHTML]="urlify(message.metadata.src, message.metadata.name)"></div>  
+                          
+                          <div *ngIf="message.type == 'text'">
+                            <div *ngIf="isPopupUrl(message.text); then contentPopup else contentNewTab">here is ignored</div>
+                            <ng-template #contentPopup>
+                              <div style="text-decoration: underline; padding:8px; cursor: pointer;" (click)="popupUrl(message.text,'windowName')">{{strip_tags(message.text)}}contentOther</div>
+                            </ng-template>
+                            <ng-template #contentNewTab>
+                              <div class="message-content message-content-text" [innerHTML]="message.text"></div>
+                            </ng-template>
+                          </div>
+                          <div class="timestamp-message right">{{message.timestamp | date: 'H:mm'}}</div>
+                        </div>
+
+                      </div>
+                    </ng-template>
+                  
+                  </ng-template>
+                </ion-item>
+
+              </div>
+
+            </ion-list>
+          </div>
+        </div>
+        <div *ngIf="showButtonToBottom" id="chat21-buttonToBottom" (click)="scrollBottom()">
+          <div *ngIf="NUM_BADGES!=0" id="chat21-divBudge">{{NUM_BADGES}}</div>
+        </div>
+      </ng-template>
+
+      <ng-template #contentMessageWelcome>
+        <div class="messageFirst" [style.display]="style_message_welcome === true ? '' : 'none'">
+          {{ 'LABEL_NO_MSG_HERE' | translate }}
+        </div>
+      </ng-template>
+
+    </ion-content>
+
+
+
+
+  <ion-footer id="footerMessage" [class.halfscreen]="openInfoConversation || openInfoMessage">
+    <ion-toolbar>
+      <ion-grid>
+        <ion-row #messagesPageFooter id="messages-page-footer">
+
+          <ion-col col-2 col-bottom>
+            <label for="chat21-file" [class.active]="!isFileSelected" class="chat21-textarea-button">
+              <ion-icon ios="ios-attach" md="md-attach" class="chat21-icon left active"></ion-icon>
+            </label>
+            <div [class.active]="isFileSelected" class="chat21-textarea-button" id="chat21-button-reset" (click)="resetLoadImage()"></div>
+            <div [class.active]="isFileSelected" class="chat21-textarea-button" id="chat21-button-send" (click)="loadImage()"></div>
+            <input [disabled]="!conversationEnabled" style='display:none' type="file" accept="image/*,.pdf,.zip" name="chat21-file" id="chat21-file" class="inputfile" (change)="detectFiles($event)" />
+          </ion-col>
+
+          <ion-col col-auto>
+            <div class="text_message">
+              <ion-textarea #messageTextArea id="messageTextArea" [(ngModel)]="messageString" (ionChange)="messageChange($event)" [disabled]="!conversationEnabled"  
+              rows="1" placeholder="{{ 'LABEL_ENTER_MSG' | translate }}" (keyup.enter)="pressedOnKeyboard($event, messageString);" autofocus autosize></ion-textarea>
+            </div>
+            <div class="button_send">
+              <button [disabled]="!conversationEnabled" ion-button clear *ngIf="messageString && messageString.trim()!=''" class="message-editor-button right active" (focus)="doScroll()" (click)="controlOfMessage(messageString)">
+                <span>{{ 'LABEL_SEND' | translate }}</span>
+              </button>
+            </div>
+          </ion-col>
+
+        </ion-row>
+
+      </ion-grid>
+    </ion-toolbar>
+  </ion-footer>
+
 </ng-template>
-
-
-<ion-content>
-<div>{{IDConv}}</div>
-</ion-content>
