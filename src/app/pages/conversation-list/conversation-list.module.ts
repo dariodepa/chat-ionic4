@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { createTranslateLoader } from '../../services/utils/utils';
 
 import { ConversationListPageRoutingModule } from './conversation-list-routing.module';
-// import { ConversationListTestPage } from './conversation-list-test.page';
+import { ConversationListPage } from './conversation-list.page';
 // import {LoginModalModule} from '../../modals/authentication/login/login.module';
 
 @NgModule({
@@ -26,6 +26,6 @@ import { ConversationListPageRoutingModule } from './conversation-list-routing.m
       } 
     })
   ],
-  declarations: []
+  declarations: [ConversationListPage]
 })
 export class ConversationListPageModule {}

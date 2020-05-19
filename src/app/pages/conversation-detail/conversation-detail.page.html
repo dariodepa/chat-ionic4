@@ -1,6 +1,9 @@
 <span *ngIf="conversationSelected; then showConversation else showPlaceholder"></span>
 <ng-template #showPlaceholder>
   <div padding class="tile-splash-page">&nbsp;</div>
+  <button ion-button icon-only (click)="caricaLista()">
+    <span class="material-icons">information-circle</span>
+  </button>
 </ng-template>
 <ng-template #showConversation>
   <ion-header no-border>
@@ -97,7 +100,6 @@
                         <div class="timestamp-message right">{{message.timestamp | date: 'H:mm'}}</div>
                       </div>
 
-
                       <div class="attribute-message">
                         <div class="status-message">
                           <span *ngIf="!message.status" class="material-icons">
@@ -180,8 +182,9 @@
   <ion-footer id="footerMessage" [class.halfscreen]="openInfoConversation || openInfoMessage">
     <ion-toolbar>
       <ion-grid>
-        <ion-row #messagesPageFooter id="messages-page-footer">
 
+        <ion-row #messagesPageFooter id="messages-page-footer">
+          
           <ion-col col-2 col-bottom>
             <label for="chat21-file" [class.active]="!isFileSelected" class="chat21-textarea-button">
               <ion-icon ios="ios-attach" md="md-attach" class="chat21-icon left active"></ion-icon>

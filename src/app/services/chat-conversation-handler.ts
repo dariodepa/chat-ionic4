@@ -60,7 +60,7 @@ export class ChatConversationHandler {
     this.tenant = tenant;
     this.recipientId = recipientId;
     this.recipientFullname = recipientFullName;
-    this.senderId = this.loggedUser.uid;
+    this.senderId = loggedUser.uid;
     this.conversationWith = recipientId;
     this.messages = [];
     this.attributes = this.setAttributes();

@@ -79,7 +79,7 @@ export class ConversationListPage implements OnInit {
         conversationSelected: conversationSelected
       }
     };
-    this.router.navigate(['conversation-detail/'+conversationSelected.uid], navigationExtras);
+    this.router.navigate(['conversation-detail/10'], navigationExtras);
   }
 
   //------------------------------------------------------------------//
@@ -190,6 +190,8 @@ export class ConversationListPage implements OnInit {
     this.initVariables();
     this.initConversationsHandler();
     // this.initSubscriptions();
+    
+    
   } 
 
   /** 
@@ -264,6 +266,16 @@ export class ConversationListPage implements OnInit {
   setUidConvSelected(uidConvSelected?: string) {
     this.uidConvSelected = uidConvSelected;
     this.chatConversationsHandler.uidConvSelected = uidConvSelected;
+
+    console.log('this.uidConvSelected', this.uidConvSelected);
+    // if(this.uidConvSelected){
+    //   // this.router.navigateByUrl('conversation-detail/'+this.uidConvSelected);
+    //   let navigationExtras: NavigationExtras = {
+    //     state: {
+    //     }
+    //   };
+    //   this.router.navigate(['conversation-detail/'+this.uidConvSelected], navigationExtras);
+    // }
   }
 
   /**
@@ -359,6 +371,7 @@ export class ConversationListPage implements OnInit {
    * (metodo richiamato da html) 
    */
   openArchivedConversationsPage() {
+    this.router.navigate(['/']);
     // this.navCtrl.push(ArchivedConversationsPage, {
     //   'archivedConversations': this.archivedConversations,
     //   'tenant': this.tenant,

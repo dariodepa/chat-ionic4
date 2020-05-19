@@ -2,8 +2,9 @@
   <div (click)="hideAlert()">
     <ion-split-pane contentId="main">
       <!--  our side menu  -->
-      <ion-router-outlet id="sidebar" animated="false" #masterNav>
-        <app-conversation-list></app-conversation-list>
+      <ion-router-outlet id="sidebar" name='sidebar' animated="false" #masterNav>
+        <!-- <app-conversation-list></app-conversation-list> -->
+        <!-- <app-details></app-details> -->
       </ion-router-outlet>
       <!-- the main content -->
       <ion-router-outlet id="main" animated="false" #detailNav></ion-router-outlet>

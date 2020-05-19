@@ -53,11 +53,15 @@ import {
 import { EventsService } from '../../services/events-service';
 import { initializeApp } from 'firebase';
 
+declare let d3: any;
+
 @Component({
   selector: 'app-conversation-detail',
   templateUrl: './conversation-detail.page.html',
   styleUrls: ['./conversation-detail.page.scss'],
 })
+
+
 
 export class ConversationDetailPage implements OnInit {
   
@@ -65,6 +69,10 @@ export class ConversationDetailPage implements OnInit {
   @ViewChild('messageTextArea', {static: false}) messageTextArea: ElementRef;
   @ViewChild('scrollMe', {static: false}) private scrollMe: ElementRef;
 
+  
+  public screenWidth: any;
+  public screenHeight: any;
+  
   showButtonToBottom = false;
   contentScroll: any;
   NUM_BADGES = 0;
@@ -141,6 +149,7 @@ export class ConversationDetailPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private el: ElementRef,
     private router: Router,
     public popoverCtrl: PopoverController,
     // public navParams: NavParams,
@@ -166,13 +175,24 @@ export class ConversationDetailPage implements OnInit {
         console.log('this.conversationSelected: ', this.conversationSelected);
       }
     });
+
+    this.IDConv = this.route.snapshot.paramMap.get('IDConv');
+    console.log('this.conversationSelected: ',this.IDConv);
+    if(this.IDConv == '10'){
+      this.router.navigateByUrl('conversation-list');
+      // this.router.navigate(['conversation-list/', {});
+    }
   }
+
+ 
 
 
   //// SYSTEM FUNCTIONS ////
   ngOnInit() {
     console.log('------------> ngOnInit');
     // this.initialize();
+    //this.caricaLista();
+   
   }
 
   ionViewWillEnter() {
@@ -187,6 +207,7 @@ export class ConversationDetailPage implements OnInit {
   ionViewDidEnter() {
     console.log('------------> ionViewDidEnter');
     // this.initialize();
+   
   }
 
   /**
@@ -203,8 +224,6 @@ export class ConversationDetailPage implements OnInit {
   ngAfterViewInit() {
     console.log('------------> ngAfterViewInit ');
   }
-
-
 
 
   //// MY FUNCTIONS ////
@@ -231,11 +250,16 @@ export class ConversationDetailPage implements OnInit {
     this.lastConnectionDate = '';
     this.tenant = this.chatManager.getTenant();
     this.currentUserDetail = this.chatManager.getLoggedUser();
-    this.conversationWith = this.conversationSelected.uid;
-    this.conversationWithFullname = this.conversationSelected.conversation_with_fullname;
-    this.IDConv = this.route.snapshot.paramMap.get('IDConv');
-    this.channel_type = this.conversationSelected.channel_type;
-    (!this.channel_type || this.channel_type == 'undefined') ? this.channel_type = TYPE_DIRECT : this.channel_type;
+    if(this.conversationSelected){
+      this.conversationWith = this.conversationSelected.uid;
+      this.conversationWithFullname = this.conversationSelected.conversation_with_fullname;
+      this.channel_type = this.conversationSelected.channel_type;
+      (!this.channel_type || this.channel_type == 'undefined') ? this.channel_type = TYPE_DIRECT : this.channel_type;
+    }
+    
+   
+    
+   
     
     // DESTROY INFO CONVERSATION 
     console.log('1 - DESTROY INFO CONVERSATION', this.events);

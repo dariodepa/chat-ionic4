@@ -26,7 +26,6 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 @import '~material-design-icons/iconfont/material-icons.css';
-
 @import 'variables.scss';
 
 // http://ionicframework.com/docs/v2/theming/
@@ -58,20 +57,20 @@ body {
 
 // Ionic 'Split Pane' styles need to be tweaked to
 // get this 'master-detail' example to work!
-.split-pane-side:not(ion-menu) {
-    display: initial;
-}
+// .split-pane-side:not(ion-menu) {
+//     display: initial;
+// }
 
-.split-pane-main {
-    display: none;
-    // position: absolute!important;
-}
+// .split-pane-main {
+//     display: none;
+//     // position: absolute!important;
+// }
 
-.split-pane-visible {
-    .split-pane-main {
-        display: block;
-    }
-}
+// .split-pane-visible {
+//     .split-pane-main {
+//         display: block;
+//     }
+// }
 
 
 #sidebar {

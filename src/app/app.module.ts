@@ -89,7 +89,10 @@ import { ChatPresenceHandler } from './services/chat-presence-handler';
 
 
 import { ConversationListPage } from './pages/conversation-list/conversation-list.page';
+import { ConversationListPageModule } from './pages/conversation-list/conversation-list.module';
+import { DetailsPage } from './pages/details/details.page';
 import {LoginModalModule} from './modals/authentication/login/login.module';
+
 // import { ConversationDetailPage } from './pages/conversation-detail/conversation-detail.page';
 // import { LoginPage } from './pages/authentication/login/login';
 // import { LoginPageModule } from './modals/authentication/login/login.module';
@@ -130,10 +133,12 @@ const appInitializerFn = (appConfig: AppConfigProvider) => {
 @NgModule({
   declarations: [
     AppComponent,
-    ConversationListPage
+    // ConversationListPage,
+    // DetailsPage
   ],
   entryComponents: [
-    ConversationListPage
+    // ConversationListPage,
+    // DetailsPage
   ],
   imports: [
     BrowserModule, 
@@ -143,6 +148,7 @@ const appInitializerFn = (appConfig: AppConfigProvider) => {
     AppRoutingModule,
     HttpClientModule, 
     LoginModalModule,
+    ConversationListPageModule,
     TranslateModule.forRoot({ 
       loader: { 
         provide: TranslateLoader, 

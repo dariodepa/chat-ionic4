@@ -1,5 +1,6 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import { Component, ViewChild, NgZone, HostListener, ElementRef } from '@angular/core';
 import { Config, Platform, IonRouterOutlet, IonSplitPane, NavController, MenuController, AlertController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import * as firebase from 'firebase/app';
 // import { ListaConversazioniPage } from './pages/lista-conversazioni/lista-conversazioni';
@@ -19,7 +20,7 @@ import { AuthService } from './services/auth-service';
 import { ModalController } from '@ionic/angular'
 // pages
 import { LoginModal } from './modals/authentication/login/login.modal';
-
+// import { ConversationListPage } from './pages/conversation-list/conversation-list.page';
 // utils
 import { presentModal, closeModal } from './services/utils/utils';
 
@@ -36,6 +37,7 @@ type NewType = IonRouterOutlet;
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
+  @ViewChild('masterNav', {static: false}) masterNav: ElementRef;
   // @ViewChild('masterNav', { read: IonRouterOutlet, static: true })masterNav: IonRouterOutlet;
   // @ViewChild('detailNav', { read: IonRouterOutlet, static: false })detailNav: IonRouterOutlet;
 
@@ -63,11 +65,29 @@ export class AppComponent {
     public navCtrl: NavController,
     public user: UserService,
     public modalController: ModalController,
-    public authService: AuthService
+    public authService: AuthService,
+    private router: Router
   ) {
     this.initializeApp();
     // this.onRouterActivate();
+    // this.router.navigate([{outlets: {primary: 'path' ,sidebar: 'path'}}]);
+    // this.router.navigate(['conversation-list/'], { outlets: { outletName: ['navigatingPath'] }});
+    // this.router.navigate([{ outlets: { sidebar: 'conversation-list' } }]);
+
   }
+
+
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   // this.screenWidth = window.innerWidth;
+  //   // this.screenHeight = window.innerHeight;
+  //   console.log('width::::', window.innerWidth);
+
+  //   console.log(this.masterNav.nativeElement.offsetWidth);
+  //   if(this.masterNav.nativeElement.offsetWidth == 0){
+  //     this.router.navigateByUrl('/conversation-list');
+  //   }
+  // }
 
   /** */
   // onRouterActivate(): void {
@@ -120,7 +140,11 @@ export class AppComponent {
   */
   subscribeLoggedUserLogin = (user: any) => {
     console.log('************** subscribeLoggedUserLogin', user);
-    closeModal(this.modalController);
+    try {
+      closeModal(this.modalController);
+    } catch (err) {
+      console.error("-> error:", err)
+    }
   }
 
   /** 
