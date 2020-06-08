@@ -72,12 +72,21 @@ body {
 //     }
 // }
 
+// ion-content {
+//     --overflow: hidden;
+// }
+
+
+
 
 #sidebar {
-    min-width: 320px;
+    min-width: 256px;
+    width: 33%;
+    max-width: 320px;
 }
 
-app-conversation-list {
+
+app-conversations-list {
     width: 100%;
     height: 100%;
 }

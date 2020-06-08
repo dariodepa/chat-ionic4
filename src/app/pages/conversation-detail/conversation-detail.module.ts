@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ConversationDetailPageRoutingModule } from './conversation-detail-routing.module';
 import { ConversationDetailPage } from './conversation-detail.page';
+import { ConversationInfoPage } from '../conversation-info/conversation-info.page';
 
 
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
@@ -25,6 +26,6 @@ import { createTranslateLoader } from '../../services/utils/utils';
       },
     })
   ],
-  declarations: [ConversationDetailPage]
+  declarations: [ConversationDetailPage, ConversationInfoPage]
 })
 export class ConversationDetailPageModule {}

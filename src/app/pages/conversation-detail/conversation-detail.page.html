@@ -1,13 +1,19 @@
 <span *ngIf="conversationSelected; then showConversation else showPlaceholder"></span>
 <ng-template #showPlaceholder>
-  <div padding class="tile-splash-page">&nbsp;</div>
-  <button ion-button icon-only (click)="caricaLista()">
-    <span class="material-icons">information-circle</span>
-  </button>
+  <!-- <div padding class="tile-splash-page">&nbsp;</div> -->
 </ng-template>
+
 <ng-template #showConversation>
-  <ion-header no-border>
+  <ion-header no-border class="ion-no-border">
     <ion-toolbar>
+      
+      <ion-buttons slot="start">
+        <ion-back-button
+            defaultHref="conversations-list"
+            (click)="pushPage('conversations-list')">
+        </ion-back-button> 
+      </ion-buttons>
+
       <ion-title [class.info-open]="openInfoConversation || openInfoMessage">
         <ion-avatar>
           <div #avatarPlaceholder class="avatar-placeholder" [style.background-color]="conversationSelected.color" [innerHTML]="conversationSelected.avatar"></div>
@@ -58,7 +64,7 @@
   </ion-header>
 
 
-  <ion-content class="messagesView " [class.halfscreen]="openInfoConversation || openInfoMessage">
+  <ion-content class="messagesView " [class.halfscreen]="openInfoConversation">
       <span *ngIf="messages.length > 0;then content_messages else contentMessageWelcome">here is ignored</span>
       
       <ng-template #content_messages>
@@ -179,7 +185,7 @@
 
 
 
-  <ion-footer id="footerMessage" [class.halfscreen]="openInfoConversation || openInfoMessage">
+  <ion-footer id="footerMessage" [class.halfscreen]="openInfoConversation">
     <ion-toolbar>
       <ion-grid>
 
@@ -213,3 +219,16 @@
   </ion-footer>
 
 </ng-template>
+
+
+
+<!-- 
+  INFO CONVERSATION
+-->
+<div id="chat21-info-conversation" *ngIf="openInfoConversation" [class.open]="openInfoConversation">
+  <app-conversation-info
+    [attributes]= conversationSelected.attributes
+    [conversationWith]= conversationWith
+    (eventClose)="returnCloseInfoConversation()"
+  ></app-conversation-info>
+</div>

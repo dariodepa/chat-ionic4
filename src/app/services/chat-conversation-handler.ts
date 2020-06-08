@@ -60,11 +60,13 @@ export class ChatConversationHandler {
     this.tenant = tenant;
     this.recipientId = recipientId;
     this.recipientFullname = recipientFullName;
-    this.senderId = loggedUser.uid;
+    if(loggedUser){
+      this.senderId = loggedUser.uid;
+    }
+    
     this.conversationWith = recipientId;
     this.messages = [];
     this.attributes = this.setAttributes();
-    
   }
 
   setAttributes(): any {

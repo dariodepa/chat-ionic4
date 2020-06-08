@@ -1,4 +1,8 @@
 ion-header {
+    border-bottom-style: solid;
+    border-color: var(--light-gray);
+    border-bottom-width: thin;
+
     ion-title img {
         height: 30px;
     }
@@ -23,6 +27,8 @@ ion-header {
     }  
 }
 
+
+
 ion-list {
     display: block;
     margin-block-start: 1em;
@@ -33,6 +39,8 @@ ion-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    min-height: 800px;
+    background-color: green;
 
     ion-item {
         cursor: pointer;
@@ -151,5 +159,6 @@ ion-list {
             bottom: 8px;
         }
     }
+
+    
 }
-        

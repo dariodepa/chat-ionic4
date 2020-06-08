@@ -90,7 +90,6 @@ export class ConversationDetailPage implements OnInit {
   public messageSelected: any;
 
   //aggiunta 
-  // private conversationSelected: ConversationModel;
   private groupDetailAttributes: any;
 
 
@@ -176,24 +175,35 @@ export class ConversationDetailPage implements OnInit {
       }
     });
 
-    this.IDConv = this.route.snapshot.paramMap.get('IDConv');
+    this.conversationWith = this.route.snapshot.paramMap.get('IDConv');
+
     console.log('this.conversationSelected: ',this.IDConv);
-    if(this.IDConv == '10'){
-      this.router.navigateByUrl('conversation-list');
-      // this.router.navigate(['conversation-list/', {});
-    }
+    // if(this.IDConv == '10'){
+    //   this.router.navigateByUrl('conversations-list');
+    //   // this.router.navigate(['conversations-list/', {});
+    // }
   }
 
- 
+  pushPage(pageName:string){
+    this.router.navigateByUrl(pageName);
+  }
 
 
   //// SYSTEM FUNCTIONS ////
   ngOnInit() {
     console.log('------------> ngOnInit');
-    // this.initialize();
-    //this.caricaLista();
-   
+    this.events.subscribe('resize_', this.onResizeWindow);
   }
+
+
+  onResizeWindow = (type: string) => {
+    console.log('resize_', type);
+    if(type === 'mobile' && !this.IDConv && !this.conversationSelected){
+      this.router.navigateByUrl('/conversations-list');
+    } else {
+    }
+  }
+
 
   ionViewWillEnter() {
     console.log('------------> ionViewWillEnter', this.conversationSelected);
@@ -250,13 +260,13 @@ export class ConversationDetailPage implements OnInit {
     this.lastConnectionDate = '';
     this.tenant = this.chatManager.getTenant();
     this.currentUserDetail = this.chatManager.getLoggedUser();
+
     if(this.conversationSelected){
       this.conversationWith = this.conversationSelected.uid;
       this.conversationWithFullname = this.conversationSelected.conversation_with_fullname;
       this.channel_type = this.conversationSelected.channel_type;
-      (!this.channel_type || this.channel_type == 'undefined') ? this.channel_type = TYPE_DIRECT : this.channel_type;
     }
-    
+    (!this.channel_type || this.channel_type == 'undefined') ? this.channel_type = TYPE_DIRECT : this.channel_type;
    
     
    
@@ -282,25 +292,7 @@ export class ConversationDetailPage implements OnInit {
     console.log('conversationSelected: ', this.uidConversationWith);
     this.chatPresenceHandler.userIsOnline(this.uidConversationWith);
     this.chatPresenceHandler.lastOnlineForUser(this.uidConversationWith);
-    this.initConversationHandler();
-    var that = this;
-    // NUOVO MESSAGGIO!!
-    // this.conversationHandler.obsAdded
-    //   .subscribe(newMessage => {
-    //     if (that.scrollMe) {
-    //       const divScrollMe = that.scrollMe.nativeElement;
-    //       const checkContentScrollPosition = that.isContentScrollEnd(divScrollMe);
-    //       if (checkContentScrollPosition) {
-    //         setTimeout(function () {
-    //           that.scrollBottom();
-    //         }, 100);
-    //       } else {
-    //         that.NUM_BADGES++;
-    //       }
-    //     }
-    //     that.isTypings = null;
-    //   });
-    
+    this.initConversationHandler();    
   }
 
 
@@ -645,6 +637,8 @@ export class ConversationDetailPage implements OnInit {
    */
   initConversationHandler() {
     const that = this;
+    console.log('currentUserDetail ***', this.currentUserDetail);
+
     this.style_message_welcome = false;
     // CHIEDE ChatConversationHandler  AL CHATMANAGER
     let handler: ChatConversationHandler = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
@@ -804,10 +798,10 @@ export class ConversationDetailPage implements OnInit {
   //   console.log('returnCloseInfoMessage');
   //   this.openInfoMessage = false;
   // }
-  // returnCloseInfoConversation() {
-  //   console.log('returnCloseInfoConversation');
-  //   this.openInfoConversation = false;
-  // }
+  returnCloseInfoConversation() {
+    console.log('returnCloseInfoConversation');
+    this.openInfoConversation = false;
+  }
   // returnOpenInfoUser(member) {
   //   this.memberSelected = member;
   //   this.openInfoUser = true;

@@ -621,7 +621,27 @@ export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, '../../../assets/i18n/', '.json');
 }
 
-
+export function redirect2(router, IDConv, conversationSelected){
+  if(window.innerWidth < 768){
+    // mobile
+    console.log('mobile::::', window.innerWidth,IDConv, conversationSelected, router);
+    if(!IDConv){
+      router.navigateByUrl('/conversations-list');
+    }
+  } else {
+    // desktop
+    console.log('desktop::::', window.innerWidth,IDConv, conversationSelected, router);
+    if(IDConv){
+      let navigationExtras = {
+        state: {
+          conversationSelected: this.conversationSelected
+        }
+      };
+      router.navigate(['conversation-detail/'+conversationSelected.uid], navigationExtras);
+      //this.router.navigateByUrl('/conversation-detail/'+this.IDConv);
+    }
+  }
+}
 
 // https://liftcodeplay.com/2020/02/09/how-to-check-for-file-existance-in-firebase-storage/
 // export async function imageExists(urlImage: string ) {

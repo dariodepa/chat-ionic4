@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { ModalController, IonRouterOutlet } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 // config
 import { environment } from '../../../environments/environment';
@@ -11,7 +11,10 @@ import { UserModel } from '../../models/user';
 // utils
 import { presentModal, closeModal, getParameterByName, convertMessage, windowsMatchMedia } from '../../services/utils/utils';
 import { TYPE_POPUP_LIST_CONVERSATIONS } from '../../services/utils/constants';
-import { EventsService } from '../../services/events-service';
+import { EventsService } from '../../services/events-service'; 
+import PerfectScrollbar from 'perfect-scrollbar'; // https://github.com/mdbootstrap/perfect-scrollbar
+
+
 
 // pages
 import { LoginModal } from '../../modals/authentication/login/login.modal';
@@ -23,17 +26,20 @@ import { ChatManager } from '../../services/chat-manager';
 
 
 @Component({
-  selector: 'app-conversation-list',
-  templateUrl: './conversation-list.page.html',
-  styleUrls: ['./conversation-list.page.scss'],
+  selector: 'app-conversations-list',
+  templateUrl: './conversations-list.page.html',
+  styleUrls: ['./conversations-list.page.scss'],
 })
 export class ConversationListPage implements OnInit {
+  // @ViewChild('masterNav', {static: false}) masterNav: IonRouterOutlet;
+  public tenant: string;
   public loggedUser: UserModel;
   public conversations: Array<ConversationModel> = [];
   public uidConvSelected: string;
-  public tenant: string;
+  public conversationSelected: ConversationModel;
+
+  
   public uidReciverFromUrl: string;
-  // private conversationsHandler: ChatConversationsHandler;
   public showPlaceholder = true;
   public numberOpenConv: number = 0;
 
@@ -41,18 +47,9 @@ export class ConversationListPage implements OnInit {
   public supportMode = environment['supportMode'];
 
   public convertMessage = convertMessage;
-  user = {
-    name: 'Simon Grimm',
-    website: 'www.ionicacademy.com',
-    address: {
-      zip: 48149,
-      city: 'Muenster',
-      country: 'DE'
-    },
-    interests: [
-      'Ionic', 'Angular', 'YouTube', 'Sports'
-    ]
-  };
+
+
+
   constructor (
     private router: Router,
     public events: EventsService,
@@ -69,17 +66,58 @@ export class ConversationListPage implements OnInit {
    */
   ngOnInit() {
     console.log('ngOnInit');
+    // console.log(this.masterNav.nativeEl.offsetWidth);
     this.tenant = 'tilechat';//this.chatManager.getTenant();
     this.subscriptions();
+    this.events.subscribe('resize_', this.onResizeWindow);
+
+    
+    // let ps = new PerfectScrollbar(this.scrollbar, {
+    //   wheelSpeed: 2,
+    //   wheelPropagation: true,
+    //   minScrollbarLength: 20
+    // });
+  }
+
+
+  ionViewDidEnter() {
+    console.log('ConversationListPage ------------> ionViewDidEnter');
+    const container = document.querySelector('#scrollbar');
+    const ps = new PerfectScrollbar(container);
+    
+    console.log("elemSidebar", container);
+    // ps.update();
+    if(window.innerWidth >= 768){
+      this.navigatePage();
+    } 
+  }
+    
+  onResizeWindow = (type: string) => {
+    console.log('resize_', type);
+    if(type === 'desktop'){
+      this.navigatePage();
+    } else {
+      this.initialize();
+    }
+  }
+
+  private navigatePage(){
+    if(this.conversationSelected){
+      this.openDetailsWithState(this.conversationSelected);
+    } else {
+      this.router.navigateByUrl('detail');
+    }
   }
 
   openDetailsWithState(conversationSelected) {
+    console.log('openDetailsWithState:: >>>> conversationSelected ', conversationSelected);
+    //this.router.navigateByUrl('detail/'+conversationSelected.uid);
     let navigationExtras: NavigationExtras = {
       state: {
         conversationSelected: conversationSelected
       }
     };
-    this.router.navigate(['conversation-detail/10'], navigationExtras);
+    this.router.navigate(['conversation-detail/'+this.uidConvSelected], navigationExtras);
   }
 
   //------------------------------------------------------------------//
@@ -147,8 +185,7 @@ export class ConversationListPage implements OnInit {
       that.setUidConvSelected(that.uidReciverFromUrl);
       let position = conversations.findIndex(i => i.uid === that.uidReciverFromUrl);
       if (position > -1 ) {
-        //console.log('TROVATO');
-        // that.openMessageList();
+        // nuova conversazione con uidReciverFromUrl
         that.uidReciverFromUrl = null;
         that.showPlaceholder = false;
       } else if(that.showPlaceholder) {
@@ -164,12 +201,18 @@ export class ConversationListPage implements OnInit {
         that.showPlaceholder = false;
       }
     } else {      
-      if (that.uidConvSelected && that.showPlaceholder === true) {
+      if (that.uidConvSelected) {
         const conversationSelected = that.conversations.find(item => item.uid === that.uidConvSelected);
         if (conversationSelected) {
           that.setUidConvSelected(that.uidConvSelected);
-          // that.openMessageList();
+          that.conversationSelected = conversationSelected;
           that.showPlaceholder = false;
+
+              
+          if(that.uidConvSelected){
+            // that.openDetailsWithState(conversationSelected);
+          }
+
         }
       }
     }
@@ -266,16 +309,7 @@ export class ConversationListPage implements OnInit {
   setUidConvSelected(uidConvSelected?: string) {
     this.uidConvSelected = uidConvSelected;
     this.chatConversationsHandler.uidConvSelected = uidConvSelected;
-
-    console.log('this.uidConvSelected', this.uidConvSelected);
-    // if(this.uidConvSelected){
-    //   // this.router.navigateByUrl('conversation-detail/'+this.uidConvSelected);
-    //   let navigationExtras: NavigationExtras = {
-    //     state: {
-    //     }
-    //   };
-    //   this.router.navigate(['conversation-detail/'+this.uidConvSelected], navigationExtras);
-    // }
+    console.log('setUidConvSelected: ', this.uidConvSelected, this.conversationSelected);
   }
 
   /**
@@ -320,8 +354,8 @@ export class ConversationListPage implements OnInit {
         //   channel_type: conversationSelected.channel_type
         // });
         // that.conversationsHandler.setConversationRead(conversationSelected.uid);
-        that.openDetailsWithState(conversationSelected);
         that.databaseProvider.setUidLastOpenConversation(that.uidConvSelected);
+        that.openDetailsWithState(conversationSelected);
       } else if (!type) {
         if (windowsMatchMedia()) {
           // that.navProxy.pushDetail(PlaceholderPage, {});

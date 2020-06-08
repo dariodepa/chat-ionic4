@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ConversationListPage } from './conversation-list.page';
+import { ConversationListPage } from './conversations-list.page';
 
 const routes: Routes = [
   {

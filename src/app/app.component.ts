@@ -20,9 +20,10 @@ import { AuthService } from './services/auth-service';
 import { ModalController } from '@ionic/angular'
 // pages
 import { LoginModal } from './modals/authentication/login/login.modal';
-// import { ConversationListPage } from './pages/conversation-list/conversation-list.page';
+// import { ConversationListPage } from './pages/conversations-list/conversations-list.page';
 // utils
 import { presentModal, closeModal } from './services/utils/utils';
+
 
 type NewType = IonRouterOutlet;
 
@@ -38,6 +39,7 @@ type NewType = IonRouterOutlet;
 })
 export class AppComponent {
   @ViewChild('masterNav', {static: false}) masterNav: ElementRef;
+  // @ViewChild('scrollbar', {static: false}) scrollbar: HTMLElement;
   // @ViewChild('masterNav', { read: IonRouterOutlet, static: true })masterNav: IonRouterOutlet;
   // @ViewChild('detailNav', { read: IonRouterOutlet, static: false })detailNav: IonRouterOutlet;
 
@@ -71,23 +73,30 @@ export class AppComponent {
     this.initializeApp();
     // this.onRouterActivate();
     // this.router.navigate([{outlets: {primary: 'path' ,sidebar: 'path'}}]);
-    // this.router.navigate(['conversation-list/'], { outlets: { outletName: ['navigatingPath'] }});
-    // this.router.navigate([{ outlets: { sidebar: 'conversation-list' } }]);
+    // this.router.navigate(['conversations-list/'], { outlets: { outletName: ['navigatingPath'] }});
+    // this.router.navigate([{ outlets: { sidebar: 'conversations-list' } }]);
 
   }
 
 
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   // this.screenWidth = window.innerWidth;
-  //   // this.screenHeight = window.innerHeight;
-  //   console.log('width::::', window.innerWidth);
+  
 
-  //   console.log(this.masterNav.nativeElement.offsetWidth);
-  //   if(this.masterNav.nativeElement.offsetWidth == 0){
-  //     this.router.navigateByUrl('/conversation-list');
-  //   }
-  // }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    console.log('width::::', window.innerWidth);
+    if(window.innerWidth < 768){
+      // mobile
+      this.events.publish('resize_', 'mobile');
+    } else {
+      // desktop
+      console.log('desktop::::', window.innerWidth);
+      this.events.publish('resize_', 'desktop');
+    }
+  }
+
+  ngOnInit() {
+  }
 
   /** */
   // onRouterActivate(): void {
@@ -116,6 +125,8 @@ export class AppComponent {
       this.authService.initialize();
       
       this.subscriptions();
+      
+
     });
   }
 

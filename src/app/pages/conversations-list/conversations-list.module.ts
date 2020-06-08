@@ -7,8 +7,8 @@ import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/
 import { HttpClient } from '@angular/common/http';
 import { createTranslateLoader } from '../../services/utils/utils';
 
-import { ConversationListPageRoutingModule } from './conversation-list-routing.module';
-import { ConversationListPage } from './conversation-list.page';
+import { ConversationListPageRoutingModule } from './conversations-list-routing.module';
+import { ConversationListPage } from './conversations-list.page';
 // import {LoginModalModule} from '../../modals/authentication/login/login.module';
 
 @NgModule({

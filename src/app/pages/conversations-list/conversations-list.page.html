@@ -1,4 +1,4 @@
-<ion-header  no-border>
+<ion-header no-border class="ion-no-border">
   <ion-toolbar>
     <!-- <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
@@ -25,8 +25,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="list-avatar-page">
+<ion-content class="list-avatar-page" appScrollbarTheme>
+  <div id="scrollbar2">
   <ion-list>
+    
+
+    
     <span *ngIf="conversations.length > 0;then contentConversations else contentMessageWelcome">here is ignored</span>
     
     <ng-template #contentConversations>
@@ -62,15 +66,13 @@
       </div>
       <div *ngIf="!loadingIsActive && conversations.length == 0" id="content_message_wellcome">
         <div class="messaggio">{{ 'LABEL_MSG_PUSH_START_CHAT' | translate }}</div>
-        <!-- <div class="pulsanti">
-          <button ion-button icon-start color="273e53" (click)="openUsersList($event)">
-            {{ 'LABEL_MSG_START_CHAT' | translate }}
-          </button>
-        </div> -->
       </div>
     </ng-template>
-
+  
+  
+ 
   </ion-list>
+  </div>
 </ion-content>
 
 

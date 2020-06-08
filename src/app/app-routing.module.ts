@@ -1,27 +1,39 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ConversationListPage } from './pages/conversation-list/conversation-list.page';
+import { ConversationListPage } from './pages/conversations-list/conversations-list.page';
 // import { ConversationDetailPage } from './pages/conversation-detail/conversation-detail.page';
-import { DetailsPage } from './pages/details/details.page';
+// import { DetailsPage } from './pages/details/details.page';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'conversation-detail/10', pathMatch: 'full' },
-  // { path: '', redirectTo: 'details', pathMatch: 'full'},
+  { path: '', redirectTo: 'detail', pathMatch: 'full' },
   { path: '', component: ConversationListPage, outlet:'sidebar' },
   {
-    path: 'conversation-list',
-    //loadChildren: './pages/conversation-list/conversation-list.module'
-    loadChildren: () => import('./pages/conversation-list/conversation-list.module').then( m => m.ConversationListPageModule)
+    path: 'conversations-list',
+    //loadChildren: './pages/conversations-list/conversation-slist.module'
+    loadChildren: () => import('./pages/conversations-list/conversations-list.module').then( m => m.ConversationListPageModule)
   },
   {
     path: 'conversation-detail/:IDConv',
     loadChildren: () => import('./pages/conversation-detail/conversation-detail.module').then( m => m.ConversationDetailPageModule)
   },
-
   {
-    path: 'details',
+    path: 'conversation-detail',
+    loadChildren: () => import('./pages/conversation-detail/conversation-detail.module').then( m => m.ConversationDetailPageModule)
+  },
+
+  // {
+  //   path: 'detail/:IDConv',
+  //   loadChildren: () => import('./pages/details/details.module').then( m => m.DetailsPageModule),
+  //   // loadChildren: './pages/details/details.module',
+  // },
+  {
+    path: 'detail',
     loadChildren: () => import('./pages/details/details.module').then( m => m.DetailsPageModule),
     // loadChildren: './pages/details/details.module',
+  },
+  {
+    path: 'conversation-info',
+    loadChildren: () => import('./pages/conversation-info/conversation-info.module').then( m => m.ConversationInfoPageModule)
   },
   
 ];

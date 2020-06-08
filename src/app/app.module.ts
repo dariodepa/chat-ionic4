@@ -88,15 +88,15 @@ import { UserService } from './services/user';
 import { ChatPresenceHandler } from './services/chat-presence-handler';
 
 
-import { ConversationListPage } from './pages/conversation-list/conversation-list.page';
-import { ConversationListPageModule } from './pages/conversation-list/conversation-list.module';
+import { ConversationListPage } from './pages/conversations-list/conversations-list.page';
+import { ConversationListPageModule } from './pages/conversations-list/conversations-list.module';
 import { DetailsPage } from './pages/details/details.page';
 import {LoginModalModule} from './modals/authentication/login/login.module';
 
 // import { ConversationDetailPage } from './pages/conversation-detail/conversation-detail.page';
 // import { LoginPage } from './pages/authentication/login/login';
 // import { LoginPageModule } from './modals/authentication/login/login.module';
-// import { ConversationListTestPageModule } from './pages/conversation-list-test/conversation-list-test.module';
+// import { ConversationListTestPageModule } from './pages/conversations-list-test/conversations-list-test.module';
 
 // import { UserService } from '../providers/user/user';
 // import { GroupService } from '../providers/group/group';
@@ -115,6 +115,7 @@ import {LoginModalModule} from './modals/authentication/login/login.module';
 //   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 // }
 
+import { ScrollbarThemeModule } from './services/utils/scrollbar-theme.directive';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -156,6 +157,7 @@ const appInitializerFn = (appConfig: AppConfigProvider) => {
         deps: [HttpClient] 
       } 
     }),
+    ScrollbarThemeModule,
     // LinkyModule,
     // IonicStorageModule.forRoot({
     //   name: "tilechat",
