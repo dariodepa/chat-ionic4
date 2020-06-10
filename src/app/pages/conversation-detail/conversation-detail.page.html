@@ -68,7 +68,8 @@
       <span *ngIf="messages.length > 0;then content_messages else contentMessageWelcome">here is ignored</span>
       
       <ng-template #content_messages>
-        <div #scrollMe id="scroll-me" style="height:100%; overflow-y:auto;" (scroll)="onScroll($event)">
+        <!-- style="height:100%; overflow-y:auto;" -->
+        <div #scrollMe id="scroll-me"  (scroll)="onScroll($event)">
           <div id="chat21-contentScroll">
             <ion-list no-lines>
               <div *ngFor="let message of messages; let i = index">
@@ -188,22 +189,29 @@
   <ion-footer id="footerMessage" [class.halfscreen]="openInfoConversation">
     <ion-toolbar>
       <ion-grid>
-
         <ion-row #messagesPageFooter id="messages-page-footer">
-          
           <ion-col col-2 col-bottom>
-            <label for="chat21-file" [class.active]="!isFileSelected" class="chat21-textarea-button">
+            <!-- <label for="chat21-file" [class.active]="!isFileSelected" class="chat21-textarea-button">
               <ion-icon ios="ios-attach" md="md-attach" class="chat21-icon left active"></ion-icon>
             </label>
             <div [class.active]="isFileSelected" class="chat21-textarea-button" id="chat21-button-reset" (click)="resetLoadImage()"></div>
             <div [class.active]="isFileSelected" class="chat21-textarea-button" id="chat21-button-send" (click)="loadImage()"></div>
-            <input [disabled]="!conversationEnabled" style='display:none' type="file" accept="image/*,.pdf,.zip" name="chat21-file" id="chat21-file" class="inputfile" (change)="detectFiles($event)" />
+            <input [disabled]="!conversationEnabled" style='display:none' type="file" accept="image/*,.pdf,.zip" name="chat21-file" id="chat21-file" class="inputfile" (change)="detectFiles($event)" /> -->
           </ion-col>
-
+              <!-- (ionChange)="messageChange($event)"  -->
           <ion-col col-auto>
             <div class="text_message">
-              <ion-textarea #messageTextArea id="messageTextArea" [(ngModel)]="messageString" (ionChange)="messageChange($event)" [disabled]="!conversationEnabled"  
-              rows="1" placeholder="{{ 'LABEL_ENTER_MSG' | translate }}" (keyup.enter)="pressedOnKeyboard($event, messageString);" autofocus autosize></ion-textarea>
+              <ion-textarea #messageTextArea 
+              id="messageTextArea" 
+              [(ngModel)]="messageString" 
+              [disabled]="!conversationEnabled"  
+              rows="1" 
+              placeholder="{{ 'LABEL_ENTER_MSG' | translate }}" 
+              (keyup.enter)="pressedOnKeyboard($event, messageString);" 
+              autofocus 
+              autosize
+              auto-grow="true"
+              ></ion-textarea>
             </div>
             <div class="button_send">
               <button [disabled]="!conversationEnabled" ion-button clear *ngIf="messageString && messageString.trim()!=''" class="message-editor-button right active" (focus)="doScroll()" (click)="controlOfMessage(messageString)">
@@ -225,7 +233,7 @@
 <!-- 
   INFO CONVERSATION
 -->
-<div id="chat21-info-conversation" *ngIf="openInfoConversation" [class.open]="openInfoConversation">
+<div id="chat21-info-conversation" *ngIf="openInfoConversation && conversationSelected" [class.open]="openInfoConversation">
   <app-conversation-info
     [attributes]= conversationSelected.attributes
     [conversationWith]= conversationWith

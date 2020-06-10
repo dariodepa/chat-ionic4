@@ -160,7 +160,7 @@ export class ChatConversationHandler {
       that.setStatusMessage(childSnapshot, that.conversationWith);
 
       console.log("msg.sender ***** " + msg.sender + " that.loggedUser.uid:::" + that.loggedUser.uid);
-      if (msg.sender === that.loggedUser.uid) {
+      if (isSender) {
         that.events.publish('doScroll');
       }
 
@@ -186,6 +186,7 @@ export class ChatConversationHandler {
         //messageText = urlify(itemMsg['text']);
         messageText = htmlEntities(itemMsg['text']);
       }
+      let isSender = that.isSender(itemMsg['sender'], that.loggedUser);
       // creo oggetto messaggio e lo aggiungo all'array dei messaggi
       const msg = new MessageModel(
         childSnapshot.key, 
@@ -202,25 +203,29 @@ export class ChatConversationHandler {
         itemMsg['type'], 
         itemMsg['attributes'], 
         itemMsg['channel_type'], 
-        false
+        isSender
       );
       const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
 
       if (msg.attributes && msg.attributes.subtype && (msg.attributes.subtype === 'info' || msg.attributes.subtype === 'info/support')) {
         that.translateInfoSupportMessages(msg);
       }
-      
+
+     
+  
       that.messages.splice(index, 1, msg);
       // aggiorno stato messaggio
       // questo stato indica che è stato consegnato al client e NON che è stato letto
       that.setStatusMessage(childSnapshot, that.conversationWith);
-
-      if (that.isSender(msg, that.loggedUser)) {
-        that.events.publish('doScroll');
-      }
+      
+      
       // pubblico messaggio - sottoscritto in dettaglio conversazione
       //that.events.publish('listMessages:changed-'+that.conversationWith, that.conversationWith, that.messages);
       //that.events.publish('listMessages:changed-'+that.conversationWith, that.conversationWith, msg);
+
+      if (isSender) {
+        that.events.publish('doScroll');
+      }
     });
 
     this.messagesRef.on("child_removed", function(childSnapshot) {
@@ -343,7 +348,7 @@ export class ChatConversationHandler {
     //const currentUser = this.loggedUser;//this.chatManager.getLoggedUser();
     console.log("isSender::::: ", sender, currentUser.uid);
     if (currentUser){
-      if (sender == currentUser.uid) {
+      if (sender === currentUser.uid) {
         //message.isSender = true;
         return true;
       } else {
@@ -399,7 +404,7 @@ export class ChatConversationHandler {
       type,
       this.attributes,
       channel_type,
-      false
+      true
     ); 
 
     console.log('messaggio **************',message);

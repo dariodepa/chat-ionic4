@@ -65,7 +65,7 @@ declare let d3: any;
 
 export class ConversationDetailPage implements OnInit {
   
-  @ViewChild(IonContent, {static: false}) content: IonContent;
+  @ViewChild(IonContent, {static: false}) ionContent: IonContent;
   @ViewChild('messageTextArea', {static: false}) messageTextArea: ElementRef;
   @ViewChild('scrollMe', {static: false}) private scrollMe: ElementRef;
 
@@ -216,8 +216,8 @@ export class ConversationDetailPage implements OnInit {
    */
   ionViewDidEnter() {
     console.log('------------> ionViewDidEnter');
-    // this.initialize();
-   
+    //this.initialize();
+    this.doScroll();
   }
 
   /**
@@ -324,7 +324,7 @@ export class ConversationDetailPage implements OnInit {
     let key = 'doScroll';
     if (!isInArray(key, this.subscriptions)) {
       this.subscriptions.push(key);
-      // this.events.subscribe(key, this.goToBottom);
+      this.events.subscribe(key, this.goToBottom);
     }
     // subscribe dettaglio messaggio
     key = 'openInfoMessage';
@@ -351,11 +351,12 @@ export class ConversationDetailPage implements OnInit {
 
   /**
    * on subcribe doScroll add message
+   * evento chiamato su add, change, remove msg se il msg è isSender true (cioè se è stato inviato dall'utenet )
    */
-  // goToBottom: any = (data) => {
-  //   this.doScroll();
-  //   console.log('*********** goToBottom');
-  // }
+  goToBottom: any = (data) => {
+    this.doScroll();
+    console.log('*********** goToBottom');
+  }
 
    /**
    * callback sottoscrizione openInfoMessage
@@ -751,11 +752,12 @@ export class ConversationDetailPage implements OnInit {
    * Scroll to bottom of page after a short delay.
    */
   scrollBottom() {
-    console.log('scrollBottom');
-    var scrollDiv = document.getElementById("scroll-me");
-    if (scrollDiv) {
-      scrollDiv.scrollTop = scrollDiv.scrollHeight;
-    }
+    console.log('scrollBottom', this.ionContent);
+    this.ionContent.scrollToBottom(1500);
+    // var scrollDiv = document.getElementById("scroll-me");
+    // if (scrollDiv) {
+    //   scrollDiv.scrollTop = scrollDiv.scrollHeight;
+    // }
   }
   /**
    * Scroll to top of the page after a short delay.
@@ -764,20 +766,29 @@ export class ConversationDetailPage implements OnInit {
     console.log('scrollTop');
     let that = this;
     setTimeout(function () {
-      that.content.scrollToTop();
+      that.ionContent.scrollToTop();
     }, 1);
   }
 
   /**
    * Scroll depending on the direction.
+   * note da verificare:
+   * 
    */
   doScroll() {
-    console.log('doScroll');
-    if (this.scrollDirection == 'bottom') {
-      this.scrollBottom();
-    } else if (this.scrollDirection == 'top') {
-      this.scrollTop();
-    }
+    console.log('doScroll ------ ', this.ionContent);
+    const that = this;
+    setTimeout(function () {
+      that.ionContent.scrollToBottom();
+    }, 0);
+    
+    // this.ionContent.scrollToTop(100);
+
+    // if (this.scrollDirection == 'bottom') {
+    //   this.scrollBottom();
+    // } else if (this.scrollDirection == 'top') {
+    //   this.scrollTop();
+    // }
   }
   // //// END Scroll managemant functions ////
 
@@ -866,19 +877,21 @@ export class ConversationDetailPage implements OnInit {
   //   const currentUser = this.chatManager.getLoggedUser();
   //   return this.conversationHandler.isSender(message, currentUser);
   // }
+
+
   /**
    * se il messaggio non è vuoto
    * 1 - ripristino l'altezza del box input a quella di default
-   * 2 - invio il messaggio
+   * 2 - invio il messaggio 
    * 3 - se l'invio è andato a buon fine mi posiziono sull'ultimo messaggio
    * @param msg 
    */
   sendMessage(msg, type, metadata?) {
-    (metadata) ? metadata = metadata : metadata = '';
+    (metadata) ? metadata : metadata = '';
     console.log("SEND MESSAGE: ", msg, this.messages);
     if (msg && msg.trim() != '' || type !== TYPE_MSG_TEXT) {
       //const textMsg = replaceBr(msg);
-      // this.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('textarea')[0].style.height = MIN_HEIGHT_TEXTAREA + "px";
+      //this.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('textarea')[0].style.height = MIN_HEIGHT_TEXTAREA + "px";
       this.conversationHandler.sendMessage(msg, type, metadata, this.conversationWith, this.conversationWithFullname, this.channel_type);
       this.chatManager.conversationsHandler.uidConvSelected = this.conversationWith;
       this.doScroll();
@@ -1217,21 +1230,21 @@ export class ConversationDetailPage implements OnInit {
     const that = this;
     console.log("event:::",event);
     try {
-      if (event) {
-        console.log("event.value:: ", event);
-        var str = event.value;
+      if (event.detail.value) {
+        // console.log("event.value:: ", event.detail.value);
+        // var str = event.detail.value;
         // that.setWritingMessages(str);
-        setTimeout(function () {
-          var pos = str.lastIndexOf("/");
-          console.log("str:: ", str);
-          console.log("pos:: ", pos);
-          if(pos >= 0 ) {
-            var strSearch = str.substr(pos+1);
-            // that.loadTagsCanned(strSearch);
-          } else {
-            that.tagsCannedFilter = [];
-          }
-        }, 300);
+        // setTimeout(function () {
+        //   var pos = str.lastIndexOf("/");
+        //   console.log("str:: ", str);
+        //   console.log("pos:: ", pos);
+        //   if(pos >= 0 ) {
+        //     var strSearch = str.substr(pos+1);
+        //     that.loadTagsCanned(strSearch);
+        //   } else {
+        //     that.tagsCannedFilter = [];
+        //   }
+        // }, 300);
         // that.resizeTextArea();
       }
     } catch (err) {
@@ -1243,39 +1256,39 @@ export class ConversationDetailPage implements OnInit {
   //  * 
   //  * @param str 
   //  */
-  // setWritingMessages(str){
-  //   this.conversationHandler.setWritingMessages(str, this.channel_type);
-  // }
+  setWritingMessages(str){
+    this.conversationHandler.setWritingMessages(str, this.channel_type);
+  }
 
-  // resizeTextArea(){
-  //   const that = this;
-  //   setTimeout(function () {
-  //     try {
-  //       var text_area = that.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('textarea')[0];
-  //       if(text_area.value.length <= 0){
-  //         text_area.style.height = 'auto';
-  //       } else {
-  //         text_area.style.height = text_area.scrollHeight + 'px';
-  //         console.log("text_area.scrollHeight ",text_area.scrollHeight);
-  //       }
-  //       //var footerHeight = that.messageTextArea['_elementRef'].nativeElement.offsetHeight+28;
-  //       //var footerHeight = text_area.offsetHeight;
-  //       console.log("text_area.nativeElement ",text_area.offsetHeight);
+  resizeTextArea(){
+    const that = this;
+    setTimeout(function () {
+      try {
+        var text_area = that.messageTextArea['_elementRef'].nativeElement.getElementsByTagName('text-input')[0];
+        if(text_area.value.length <= 0){
+          text_area.style.height = 'auto';
+        } else {
+          text_area.style.height = text_area.scrollHeight + 'px';
+          console.log("text_area.scrollHeight ",text_area.scrollHeight);
+        }
+        //var footerHeight = that.messageTextArea['_elementRef'].nativeElement.offsetHeight+28;
+        //var footerHeight = text_area.offsetHeight;
+        console.log("text_area.nativeElement ",text_area.offsetHeight);
         
-  //       var footerMessage = document.getElementById("footerMessage");
-  //       var footerHeight = footerMessage.offsetHeight;
-  //       console.log("footerMessage.height ", footerHeight);
+        var footerMessage = document.getElementById("footerMessage");
+        var footerHeight = footerMessage.offsetHeight;
+        console.log("footerMessage.height ", footerHeight);
         
-  //       console.log('msgRicevuti::::: ', footerHeight);
-  //       var scrollDiv = document.getElementById("scroll-me");
-  //       if (scrollDiv) {
-  //         scrollDiv.parentElement.style.marginBottom = footerHeight+"px";
-  //       }
-  //     } catch (err) {
-  //       console.log("error: ", err)
-  //     }    
-  //   }, 0);
-  // }
+        console.log('msgRicevuti::::: ', footerHeight);
+        var scrollDiv = document.getElementById("scroll-me");
+        if (scrollDiv) {
+          scrollDiv.parentElement.style.marginBottom = footerHeight+"px";
+        }
+      } catch (err) {
+        console.log("error: ", err)
+      }    
+    }, 0);
+  }
 
 
   // loadTagsCanned(strSearch){
